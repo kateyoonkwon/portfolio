@@ -1,0 +1,238 @@
+/*
+  Layout model: every Canva page is a 1366px-wide artboard. Elements carry their
+  Canva geometry as unitless custom properties (--x, --y, --w, --h) and are
+  scaled to the viewport with --u (one Canva pixel). Below 760px the artboard is
+  dropped and elements flow in source order (see "Mobile" at the bottom).
+*/
+
+:root {
+  --blue: #2974ba;
+  --ink: #252e34;
+  --card-fill: #edeced;
+  --bg: #ffffff;
+  --font: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- Navigation ---------- */
+
+.site-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 10;
+  container-type: inline-size;
+  pointer-events: none;
+}
+
+.site-nav ul {
+  --u: calc(100cqw / 1366);
+  display: flex;
+  justify-content: flex-end;
+  gap: calc(28 * var(--u));
+  margin: 0;
+  padding: calc(14 * var(--u)) calc(24 * var(--u)) 0 0;
+  list-style: none;
+  pointer-events: auto;
+}
+
+.site-nav a {
+  font-size: max(11px, calc(15 * var(--u)));
+  color: var(--blue);
+  opacity: 0.55;
+  white-space: nowrap;
+}
+
+.site-nav a[aria-current="true"] { opacity: 1; }
+
+.nav-toggle { display: none; }
+
+/* ---------- Artboard ---------- */
+
+.page {
+  container-type: inline-size;
+  scroll-margin-top: 0;
+}
+
+.board {
+  --u: calc(100cqw / 1366);
+  position: relative;
+  width: 100%;
+  height: calc(var(--h) * var(--u));
+  overflow: hidden;
+}
+
+.el {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  margin: 0;
+}
+
+/* ---------- Text ---------- */
+
+.t {
+  font-size: calc(26.667 * var(--u));
+  line-height: 1.18;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+.t em, .card em { font-style: italic; }
+
+.display {
+  font-size: calc(106.666 * var(--u));
+  line-height: 0.83;
+  letter-spacing: 0.045em;
+  color: var(--blue);
+  font-weight: normal;
+}
+
+.title {
+  font-size: calc(26.667 * var(--u));
+  line-height: 1.11;
+  color: var(--blue);
+  text-align: center;
+  font-weight: normal;
+}
+
+.caption {
+  color: var(--blue);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ---------- Images ---------- */
+
+/* Frame = Canva rect; the <img> inside reproduces Canva's imageBox crop. */
+.img {
+  height: calc(var(--h) * var(--u));
+  overflow: hidden;
+  background: repeating-linear-gradient(45deg, #f2f2f2 0 10px, #e6e6e6 10px 20px);
+}
+
+.img img {
+  position: absolute;
+  display: block;
+  max-width: none;
+  left: calc(var(--ix, 0) / var(--w) * 100%);
+  top: calc(var(--iy, 0) / var(--h) * 100%);
+  width: calc(var(--iw, var(--w)) / var(--w) * 100%);
+  height: calc(var(--ih, var(--h)) / var(--h) * 100%);
+}
+
+.img.framed::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: max(1px, calc(2 * var(--u))) solid var(--ink);
+  pointer-events: none;
+}
+
+.img.hero-bg { background: none; }
+
+/* Project-page images sit in rounded Canva frames (36px, confirmed from exported SVGs). */
+section:not(#home) .img { border-radius: calc(36 * var(--u)); }
+.img.framed::after { border-radius: inherit; }
+
+/* SVG exports from Canva already include their own crop, corners and stroke. */
+.img.svg { background: none; border-radius: 0 !important; }
+
+/* Rounded outline drawn around a group of images. */
+.outline {
+  height: calc(var(--h) * var(--u));
+  border: max(1px, calc(2 * var(--u))) solid var(--ink);
+  border-radius: calc(var(--r, 36) * var(--u));
+  pointer-events: none;
+}
+
+/* ---------- Cards ---------- */
+
+.card {
+  height: calc(var(--h) * var(--u));
+  display: flex;
+  align-items: center;
+  padding: calc(18 * var(--u)) calc(26 * var(--u));
+  border: max(1px, calc(2 * var(--u))) solid var(--blue);
+  border-radius: calc(36 * var(--u));
+  font-size: calc(26.667 * var(--u));
+  line-height: 1;
+  white-space: pre-line;
+}
+
+.card.fill { background: var(--card-fill); }
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 760px) {
+  .site-nav { position: sticky; top: 0; background: rgba(255, 255, 255, 0.96); container-type: normal; }
+  .nav-toggle {
+    display: block;
+    margin-left: auto;
+    padding: 12px 16px;
+    border: 0;
+    background: none;
+    color: var(--blue);
+    font: inherit;
+    font-size: 15px;
+    pointer-events: auto;
+  }
+  .site-nav ul {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 16px 12px;
+    text-align: right;
+  }
+  .site-nav.open ul { display: flex; }
+  .site-nav a { font-size: 16px; line-height: 2.2; opacity: 0.7; }
+
+  .board {
+    --u: 1px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 16px 56px;
+    overflow: visible;
+  }
+
+  .el { position: relative; left: auto; top: auto; width: 100%; }
+
+  .t, .card, .title { font-size: 17px; }
+  .display { font-size: 52px; }
+
+  .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }
+  .img.framed::after, .outline, .card { border-width: 1.5px; }
+
+  .card { height: auto; padding: 20px 22px; border-radius: 24px; line-height: 1.15; }
+
+  .outline { display: none; }
+
+  /* Rows of small images become a two-column grid. */
+  .m-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .m-grid > .el { width: 100%; }
+
+  .m-center { align-self: center; width: min(100%, 320px); }
+
+  /* Home hero: signature stays full width, photo grid below it. */
+  .page-hero .board { padding: 0 0 24px; gap: 0; }
+  /* Crop the frame to the signature band (~215 Canva px tall) and keep the SVG's own aspect. */
+  .page-hero .hero-bg { aspect-ratio: 1367.5 / 215; }
+  .page-hero .hero-bg img { height: auto; top: calc(-20.8 / 215 * 100%); }
+  .page-hero .m-grid { padding: 0 16px; }
+}
