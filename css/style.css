@@ -10,7 +10,8 @@
   --ink: #252e34;
   --card-fill: #edeced;
   --line: max(1px, calc(100vw / 1366));  /* hairline borders: 1 Canva px */
-  --bg: #ffffff;
+  --bg: #98b0b7;          /* velvet's average tone, for solid panels (menu) */
+  --link: #163f63;        /* small blue text on the velvet (4.8:1); titles keep --blue */
   --font: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -18,21 +19,23 @@
 
 html { scroll-behavior: smooth; }
 
+/* Velvet background (assets/velvet.webp): the photo plus its mirror image, so it
+   repeats down the page without a seam. It scrolls with the page. */
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg) url("../assets/velvet.webp") top center / 100% auto repeat-y;
   color: var(--ink);
   font-family: var(--font);
   -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--blue); text-decoration: none; }
+a { color: var(--link); text-decoration: none; }
 
 /* Highlighter yellow behind hovered links and selected text. */
 a:hover { background: #e5ef4b; }
 ::selection { background: #e5ef4b; color: var(--ink); }
 
-:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
 
 .skip-link {
   position: absolute;
@@ -71,7 +74,7 @@ a:hover { background: #e5ef4b; }
 .menu-btn {
   font: inherit;
   font-size: max(11px, calc(15 * var(--u)));
-  color: var(--blue);
+  color: var(--link);
   white-space: nowrap;
 }
 
@@ -159,12 +162,12 @@ a:hover { background: #e5ef4b; }
   display: block;
   font-size: max(11px, calc(13 * var(--u)));
   line-height: 1.25;
-  color: #a9adb1;
+  color: rgba(37, 46, 52, 0.6);  /* ink at 60%: readable on the velvet, still quieter */
   transition: color 200ms ease-out;
 }
 
 .project-index a:hover { color: var(--ink); text-decoration: none; }
-.project-index a[aria-current] { color: var(--blue); }
+.project-index a[aria-current] { color: var(--link); }
 
 /* Stitched project titles: cross-stitch cursive squares, built by tools/build_titles.py. */
 .visually-hidden {
@@ -421,7 +424,7 @@ a:hover { background: #e5ef4b; }
 }
 
 .caption {
-  color: var(--blue);
+  color: var(--link);
   font-style: italic;
   text-align: center;
 }
@@ -496,14 +499,14 @@ a:hover { background: #e5ef4b; }
 /* ---------- Mobile ---------- */
 
 @media (max-width: 760px) {
-  .site-nav { position: sticky; top: 0; background: rgba(255, 255, 255, 0.96); container-type: normal; }
+  .site-nav { position: sticky; top: 0; background: rgba(152, 176, 183, 0.94); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); container-type: normal; }
   .nav-toggle {
     display: block;
     margin-left: auto;
     padding: 12px 16px;
     border: 0;
     background: none;
-    color: var(--blue);
+    color: var(--link);
     font: inherit;
     font-size: 15px;
     pointer-events: auto;

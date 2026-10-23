@@ -62,6 +62,13 @@ keys, auto-advance until used), `.arrow.labeled` (arrow with a label in its stem
 video frames take the height of the card beside them. Project text sizes follow Somi's pages; borders are hairlines
 (`--line`, 1 Canva px) in #252e34.
 
+## Background
+
+assets/velvet.webp is the velvet photo, enhanced (de-blocked, enlarged 3x,
+sharpened, fine grain added) and stacked with its own mirror image so it repeats
+down the page without a seam. Small blue text uses the darker `--link` navy so it
+stays readable on it; large blue type (titles, "about me :)") keeps `--blue`.
+
 ## Run locally
 
 ```
