@@ -126,7 +126,7 @@ a:hover { background: #e5ef4b; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .site-nav .submenu, .project-index a { transition: none; }
+  .site-nav .submenu, .project-index a, .progress-ornament rect { transition: none; }
   html.reveal .el { opacity: 1; transform: none; transition: none; }
 }
 
@@ -164,6 +164,22 @@ a:hover { background: #e5ef4b; }
 
 .project-index a:hover { color: var(--ink); text-decoration: none; }
 .project-index a[aria-current] { color: var(--blue); }
+
+/* Projects page: left half of the dotted ornament, fixed in the left margin behind
+   the content. Its squares fill in from top to bottom as the page is scrolled. */
+.progress-ornament {
+  position: fixed;
+  top: 72px;
+  left: 1.2vw;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Never wider than the left margin (8.5vw), never taller than the window. */
+.progress-ornament svg { display: block; height: min(calc(100vh - 100px), 52vw); width: auto; }
+
+.progress-ornament rect { opacity: 0; transition: opacity 180ms ease-out; }
+.progress-ornament rect.on { opacity: 1; }
 
 /* Project names in the home page list keep the body text style. */
 .quiet-link { color: inherit; }
@@ -357,7 +373,7 @@ a:hover { background: #e5ef4b; }
   .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
-  .project-index { display: none; }
+  .project-index, .progress-ornament { display: none; }
   section.project { scroll-margin-top: 48px; }
 
   .site-nav .submenu {
