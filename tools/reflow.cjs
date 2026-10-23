@@ -18,7 +18,7 @@ const fs = require('node:fs');
 const url = process.argv[2];
 const WIDTHS = [1024, 1280, 1366, 1536, 1920];
 const GAP = 64;          // between rows
-const STORY_GAP = 36;    // between consecutive narrative rows
+const LINK_GAP = 24;     // above/below an arrow, and under a small label (.kicker)
 const BOTTOM = 90;       // below the last row of a project
 
 const browser = await chromium.launch();
@@ -41,7 +41,7 @@ for (const w of WIDTHS) {
           h = e.offsetHeight / u; e.style.height = old;
         }
         return { y: v('--y'), h: Number.isNaN(v('--h')) ? null : v('--h'), text, boxy: e.matches('.card, .box'),
-          story: e.matches('.story'), skip: e.matches('.stitch-line, .cover'), need: h };
+          outline: e.matches('.outline'), link: e.matches('.arrow, .kicker'), arrow: e.matches('.arrow'), skip: e.matches('.stitch-line, .cover'), need: h };
       }),
     };
   }));
@@ -69,7 +69,7 @@ for (const s of geo) {
   for (let k = 1; k < rows.length; k++) {
     const prev = rows[k - 1];
     const bottom = Math.max(...prev.els.map((e) => e.y + (e.h ?? 0)));
-    if (rows[k].y < bottom - 1 && prev.els.some((e) => !e.text)) {
+    if (rows[k].y < bottom - 1 && prev.els.some((e) => e.outline)) {
       prev.els.push(...rows[k].els); rows.splice(k, 1); k--;
     }
   }
@@ -86,7 +86,8 @@ for (const s of geo) {
       if (e.boxy) out[e.i].h = H;
     }
     const next = rows[k + 1];
-    y += H + (next && r.els.some((e) => e.story) && next.els.some((e) => e.story) ? STORY_GAP : GAP);
+    const tight = next && (r.els.some((e) => e.link) || next.els.some((e) => e.arrow));
+    y += H + (tight ? LINK_GAP : GAP);
   });
   layout[s.id] = { out, board: Math.round(y - GAP + BOTTOM) };
 }

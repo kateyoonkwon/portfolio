@@ -9,6 +9,7 @@
   --blue: #2974ba;
   --ink: #252e34;
   --card-fill: #edeced;
+  --line: max(1px, calc(100vw / 1366));  /* hairline borders: 1 Canva px */
   --bg: #ffffff;
   --font: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -40,7 +41,7 @@ a:hover { background: #e5ef4b; }
   z-index: 20;
   padding: 8px 14px;
   background: var(--bg);
-  border: 2px solid var(--blue);
+  border: 1px solid var(--ink);
   border-radius: 999px;
 }
 .skip-link:focus { top: 12px; outline: none; }
@@ -105,7 +106,7 @@ a:hover { background: #e5ef4b; }
   margin-top: calc(8 * var(--u));
   padding: calc(10 * var(--u)) calc(16 * var(--u));
   background: var(--bg);
-  border: max(1px, calc(2 * var(--u))) solid var(--blue);
+  border: var(--line) solid var(--ink);
   border-radius: calc(16 * var(--u));
   text-align: right;
 }
@@ -283,24 +284,28 @@ a:hover { background: #e5ef4b; }
 
 .box-title { font-size: 1.05em; }
 
-/* Case-study narrative rows: label on the left, a larger statement beside it. */
-.story {
-  display: grid;
-  grid-template-columns: calc(300 * var(--u)) 1fr;
-  align-items: baseline;
-  column-gap: calc(26 * var(--u));
-  white-space: normal;
-}
-.story .box-title { font-size: 1em; }
-.story p { margin: 0; font-size: 1.3em; line-height: 1.25; }
+/* Case-study patterns (after somi.framer.website):
+   - .trio: three cards in a row, label centred over left-aligned text
+   - .arrow: thin downward arrow leading into the next statement
+   - .kicker: small centred label above a statement
+   - .pull: very large centred statement; .pull-note: a body-size centred line */
+.trio .box-title { display: block; text-align: center; }
 
-/* Unboxed pull statements (a project's purpose or key finding). */
+.arrow {
+  height: calc(var(--h) * var(--u));
+  color: var(--ink);
+  overflow: visible;
+}
+
+.kicker { text-align: center; white-space: normal; }
+
 .pull {
-  font-size: calc(40 * var(--u));
-  line-height: 1.22;
+  font-size: calc(52 * var(--u));
+  line-height: 1.2;
   text-align: center;
   white-space: normal;
 }
+
 .pull-note { text-align: center; white-space: normal; }
 
 /* Indented list inside a card. */
@@ -319,7 +324,7 @@ a:hover { background: #e5ef4b; }
 .box {
   height: calc(var(--h) * var(--u));
   padding: calc(26 * var(--u));
-  border: max(1px, calc(2 * var(--u))) solid var(--blue);
+  border: var(--line) solid var(--ink);
   border-radius: calc(36 * var(--u));
 }
 
@@ -351,13 +356,13 @@ a:hover { background: #e5ef4b; }
 .img.hero-bg { background: none; }
 
 /* Project-page images sit in rounded frames (36px, as in the Canva SVG exports)
-   with the same 2px ink border as the other outlines. Cover images stay square. */
+   with the same hairline ink border as the other outlines. Cover images stay square. */
 .project .img:not(.cover):not(.svg) { border-radius: calc(36 * var(--u)); }
 .project .img:not(.cover):not(.svg)::after {
   content: "";
   position: absolute;
   inset: 0;
-  border: max(1px, calc(2 * var(--u))) solid var(--ink);
+  border: var(--line) solid var(--ink);
   border-radius: inherit;
   pointer-events: none;
 }
@@ -370,7 +375,7 @@ a:hover { background: #e5ef4b; }
   content: "";
   position: absolute;
   inset: 0;
-  border: max(1px, calc(2 * var(--u))) solid var(--ink);
+  border: var(--line) solid var(--ink);
   border-radius: calc(36 * var(--u));
   pointer-events: none;
 }
@@ -378,7 +383,7 @@ a:hover { background: #e5ef4b; }
 /* Rounded outline drawn around a group of images. */
 .outline {
   height: calc(var(--h) * var(--u));
-  border: max(1px, calc(2 * var(--u))) solid var(--ink);
+  border: var(--line) solid var(--ink);
   border-radius: calc(var(--r, 36) * var(--u));
   pointer-events: none;
 }
@@ -388,7 +393,7 @@ a:hover { background: #e5ef4b; }
 .card {
   height: calc(var(--h) * var(--u));
   padding: calc(26 * var(--u));
-  border: max(1px, calc(2 * var(--u))) solid var(--blue);
+  border: var(--line) solid var(--ink);
   border-radius: calc(36 * var(--u));
   font-size: calc(26.667 * var(--u));
   line-height: 1;
@@ -463,13 +468,12 @@ a:hover { background: #e5ef4b; }
   .el { position: relative; left: auto; top: auto; width: 100%; }
 
   .t, .card, .title { font-size: 17px; }
-  .story { display: block; }
-  .story .box-title { display: block; margin-bottom: 6px; }
-  .pull { font-size: 23px; }
+  .pull { font-size: 26px; }
+  .el.arrow { width: 19px; height: 64px; align-self: center; }
   .display { font-size: 52px; }
 
   .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }
-  .project .img::after, .outline, .card, .box { border-width: 1.5px; }
+  .project .img::after, .outline, .card, .box { border-width: 1px; }
 
   .card, .box { height: auto; padding: 22px; border-radius: 24px; }
   .card { line-height: 1.15; }

@@ -52,8 +52,10 @@ below the background/role boxes with even gaps. A new element can be added with
 `--y:0`; it slots in after the element before it. Run build_titles.py first if
 titles changed.
 
-Text styles: `.story` (label + statement row), `.pull` (large centred
-statement), `.pull-note` (smaller centred line under it).
+Case-study patterns (after somi.framer.website): `.card.trio` (three cards in a
+row, centred label), `svg.arrow` (thin down arrow), `.kicker` (small centred
+label), `.pull` (very large centred statement), `.pull-note` (body-size centred
+line). Borders are hairlines (`--line`, 1 Canva px) in #252e34.
 
 ## Projects page background
 
