@@ -8,7 +8,8 @@ projects.html     all 7 projects on one page, with a light-gray project list on 
 css/style.css     layout + design tokens
 js/main.js        dropdown, mobile menu, scroll-in animation, project list highlight
 vercel.json       clean URLs, plus redirects from the old /<project> pages
-assets/           name-web.svg (home background) and img/
+assets/           name-web.svg (home background), img/, fonts/
+tools/            build_titles.py — regenerates the stitched project titles
 docs/             design inventory from Canva
 ```
 
@@ -23,6 +24,20 @@ inline (`--x --y --w --h`, in Canva px) and CSS scales it to the viewport width,
 the same way Canva sites scale. Images also carry Canva's crop (`--ix --iy --iw --ih`).
 To move something, change its numbers. Below 760px the artboard switches to a
 single-column flow in source order.
+
+## Stitched project titles
+
+Project titles on projects.html are pixel squares (like Name_web.svg) that write
+themselves when scrolled into view. They are generated, not hand-drawn:
+
+```
+pip install pillow numpy scikit-image
+python3 tools/build_titles.py
+```
+
+Edit a title by changing its `data-text` on the `<h2 class="el title stitch">`
+(use `|` for a line break), then rerun the script. Font: Dancing Script (OFL,
+tools/DancingScript-OFL.txt), used only by the build script.
 
 ## Run locally
 

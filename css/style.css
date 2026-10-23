@@ -128,6 +128,7 @@ a:hover { background: #e5ef4b; }
   html { scroll-behavior: auto; }
   .site-nav .submenu, .project-index a { transition: none; }
   html.reveal .el { opacity: 1; transform: none; transition: none; }
+  html.reveal .stitch rect, html.reveal .stitch.in rect { opacity: 1; animation: none; }
 }
 
 .nav-toggle { display: none; }
@@ -165,23 +166,32 @@ a:hover { background: #e5ef4b; }
 .project-index a:hover { color: var(--ink); text-decoration: none; }
 .project-index a[aria-current] { color: var(--blue); }
 
-/* Projects page: the dotted ornament split down the middle, one half on each edge
-   of the window (cut sides flush with the edges), light gray, behind everything.
-   Each half repeats endlessly and slides with scrolling (--ornament-shift, set in JS). */
-.ornament {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  z-index: -1;
-  width: calc(100vh * 34 / 212);
-  background-repeat: repeat-y;
-  background-size: 100% auto;
-  background-position: 0 var(--ornament-shift, 0px);
-  pointer-events: none;
+/* Stitched project titles: Name_web-style squares in pen order (built by
+   tools/build_titles.py). When a title scrolls into view, its squares pop in one
+   after another, so the cursive writes itself. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.ornament-left { left: 0; background-image: url("../assets/ornament-right-half.svg"); }
-.ornament-right { right: 0; background-image: url("../assets/ornament-left-half.svg"); }
+.title.stitch svg { display: block; width: 100%; height: auto; fill: rgb(9, 112, 184); }
+.title.stitch .stitch-narrow { display: none; }
+
+.reveal .el.stitch { opacity: 1; transform: none; }
+.reveal .stitch rect { opacity: 0; transform-box: fill-box; transform-origin: center; }
+.reveal .stitch.in rect {
+  animation: stitch-in 160ms ease-out forwards;
+  animation-delay: calc(var(--i) * var(--step));
+}
+
+@keyframes stitch-in {
+  from { opacity: 0; transform: scale(0.2); }
+  to { opacity: 1; transform: none; }
+}
 
 /* Project names in the home page list keep the body text style. */
 .quiet-link { color: inherit; }
@@ -375,7 +385,9 @@ a:hover { background: #e5ef4b; }
   .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
-  .project-index, .ornament { display: none; }
+  .project-index { display: none; }
+  .title.stitch .stitch-wide { display: none; }
+  .title.stitch .stitch-narrow { display: block; }
   section.project { scroll-margin-top: 48px; }
 
   .site-nav .submenu {
