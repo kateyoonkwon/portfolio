@@ -63,6 +63,11 @@ if (indexLinks.length) {
   document.querySelectorAll('section.project').forEach((s) => tracker.observe(s));
 }
 
+// Looping videos stay paused on their poster for visitors who prefer reduced motion.
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('video[autoplay]').forEach((v) => { v.removeAttribute('autoplay'); v.pause(); });
+}
+
 document.querySelectorAll('.img img').forEach((img) => {
   const hide = () => { img.style.visibility = 'hidden'; };
   if (img.complete && img.naturalWidth === 0) hide();

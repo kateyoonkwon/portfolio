@@ -39,6 +39,22 @@ Edit a title by changing its `data-text` on the `<h2 class="title stitch">`
 bottom-right, ending at the right edge of the text boxes), then rerun the
 script; it also re-spaces the boxes below. Lowercase a–z and spaces only.
 
+## Re-spacing a project after editing its content
+
+```
+python3 -m http.server 8080 &
+NODE_PATH=$(npm root -g) node tools/reflow.cjs http://localhost:8080/projects.html
+```
+
+(needs the `playwright` package). It measures each row's text at five screen
+widths, sizes boxes in a row to the tallest content, and re-stacks the rows
+below the background/role boxes with even gaps. A new element can be added with
+`--y:0`; it slots in after the element before it. Run build_titles.py first if
+titles changed.
+
+Text styles: `.story` (label + statement row), `.pull` (large centred
+statement), `.pull-note` (smaller centred line under it).
+
 ## Projects page background
 
 assets/orchid.svg is a cross-stitch orchid chart, traced square by square, in

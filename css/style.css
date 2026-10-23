@@ -283,6 +283,38 @@ a:hover { background: #e5ef4b; }
 
 .box-title { font-size: 1.05em; }
 
+/* Case-study narrative rows: label on the left, a larger statement beside it. */
+.story {
+  display: grid;
+  grid-template-columns: calc(300 * var(--u)) 1fr;
+  align-items: baseline;
+  column-gap: calc(26 * var(--u));
+  white-space: normal;
+}
+.story .box-title { font-size: 1em; }
+.story p { margin: 0; font-size: 1.3em; line-height: 1.25; }
+
+/* Unboxed pull statements (a project's purpose or key finding). */
+.pull {
+  font-size: calc(40 * var(--u));
+  line-height: 1.22;
+  text-align: center;
+  white-space: normal;
+}
+.pull-note { text-align: center; white-space: normal; }
+
+/* Indented list inside a card. */
+.indent { display: block; padding-left: 1.2em; }
+
+/* Video in an image frame (minturn website screen recording). */
+.img video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* "background" and "role" boxes, outlined like the cards below them. */
 .box {
   height: calc(var(--h) * var(--u));
@@ -431,6 +463,9 @@ a:hover { background: #e5ef4b; }
   .el { position: relative; left: auto; top: auto; width: 100%; }
 
   .t, .card, .title { font-size: 17px; }
+  .story { display: block; }
+  .story .box-title { display: block; margin-bottom: 6px; }
+  .pull { font-size: 23px; }
   .display { font-size: 52px; }
 
   .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }
