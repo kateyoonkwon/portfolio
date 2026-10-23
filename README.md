@@ -77,6 +77,13 @@ element it highlights (`--fx`/`--fy` pick which part of the photo, `--zoom` how
 close); tools/reflow.cjs moves each glow with that element. Glows
 are hidden on phones.
 
+## Stamp and site icon
+
+assets/stamp.svg is the traced cross-stitch flower (tools/flower_cells.json) in a
+perforated stamp border, on the same square grid as the titles. It sits in the
+home page's bottom-left corner and is the site icon (with favicon-64.png and
+apple-touch-icon.png). Rebuild all three with `python3 tools/build_stamp.py`.
+
 ## Run locally
 
 ```
