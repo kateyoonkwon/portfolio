@@ -63,25 +63,17 @@ if (indexLinks.length) {
   document.querySelectorAll('section.project').forEach((s) => tracker.observe(s));
 }
 
-// Projects page: the ornament acts as a progress bar, one square per step of scroll.
-const squares = [...document.querySelectorAll('.progress-ornament rect')];
-if (squares.length) {
-  let shown = -1;
-  const update = () => {
-    const max = document.documentElement.scrollHeight - innerHeight;
-    const progress = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 1;
-    const count = Math.round(progress * squares.length);
-    if (count === shown) return;
-    squares.forEach((sq, i) => sq.classList.toggle('on', i < count));
-    shown = count;
-  };
+// Projects page: the ornament bands slide upward as the page scrolls; the
+// background repeats, so the line of ornaments never ends.
+if (document.querySelector('.ornament') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   let ticking = false;
+  const update = () => {
+    document.documentElement.style.setProperty('--ornament-shift', `${-scrollY * 0.6}px`);
+    ticking = false;
+  };
   addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { update(); ticking = false; });
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
   }, { passive: true });
-  addEventListener('resize', update);
   update();
 }
 

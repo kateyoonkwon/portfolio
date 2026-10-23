@@ -126,7 +126,7 @@ a:hover { background: #e5ef4b; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .site-nav .submenu, .project-index a, .progress-ornament rect { transition: none; }
+  .site-nav .submenu, .project-index a { transition: none; }
   html.reveal .el { opacity: 1; transform: none; transition: none; }
 }
 
@@ -165,22 +165,23 @@ a:hover { background: #e5ef4b; }
 .project-index a:hover { color: var(--ink); text-decoration: none; }
 .project-index a[aria-current] { color: var(--blue); }
 
-/* Projects page: left half of the dotted ornament, full window height on the right
-   edge (its cut side flush with the edge), behind everything. Its squares fill in
-   from top to bottom as the page is scrolled. */
-.progress-ornament {
+/* Projects page: the dotted ornament split down the middle, one half on each edge
+   of the window (cut sides flush with the edges), light gray, behind everything.
+   Each half repeats endlessly and slides with scrolling (--ornament-shift, set in JS). */
+.ornament {
   position: fixed;
   top: 0;
-  right: 0;
   bottom: 0;
   z-index: -1;
+  width: calc(100vh * 34 / 212);
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  background-position: 0 var(--ornament-shift, 0px);
   pointer-events: none;
 }
 
-.progress-ornament svg { display: block; height: 100vh; width: auto; fill: var(--card-fill); }
-
-.progress-ornament rect { opacity: 0; transition: opacity 180ms ease-out; }
-.progress-ornament rect.on { opacity: 1; }
+.ornament-left { left: 0; background-image: url("../assets/ornament-right-half.svg"); }
+.ornament-right { right: 0; background-image: url("../assets/ornament-left-half.svg"); }
 
 /* Project names in the home page list keep the body text style. */
 .quiet-link { color: inherit; }
@@ -374,7 +375,7 @@ a:hover { background: #e5ef4b; }
   .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
-  .project-index, .progress-ornament { display: none; }
+  .project-index, .ornament { display: none; }
   section.project { scroll-margin-top: 48px; }
 
   .site-nav .submenu {
