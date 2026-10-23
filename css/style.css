@@ -28,6 +28,20 @@ body {
 a { color: var(--blue); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  z-index: 20;
+  padding: 8px 14px;
+  background: var(--bg);
+  border: 2px solid var(--blue);
+  border-radius: 999px;
+}
+.skip-link:focus { top: 12px; outline: none; }
+
 /* ---------- Navigation ---------- */
 
 .site-nav {
@@ -54,7 +68,6 @@ a:hover { text-decoration: underline; }
   font: inherit;
   font-size: max(11px, calc(15 * var(--u)));
   color: var(--blue);
-  opacity: 0.55;
   white-space: nowrap;
 }
 
@@ -67,7 +80,12 @@ a:hover { text-decoration: underline; }
 
 .menu-btn::after { content: " ▾"; font-size: 0.8em; }
 
-.site-nav [aria-current] { opacity: 1; }
+/* Current page (and "projects" while on a project page) is underlined. */
+.site-nav [aria-current] {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, calc(1.5 * var(--u)));
+  text-underline-offset: 0.3em;
+}
 
 /* "projects" dropdown */
 .has-menu { position: relative; }
@@ -76,8 +94,11 @@ a:hover { text-decoration: underline; }
   position: absolute;
   top: 100%;
   right: 0;
-  display: none;
   min-width: max-content;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(calc(-6 * var(--u)));
+  transition: opacity 140ms ease-out, transform 140ms ease-out, visibility 0s 140ms;
   margin-top: calc(8 * var(--u));
   padding: calc(10 * var(--u)) calc(16 * var(--u));
   background: var(--bg);
@@ -93,7 +114,17 @@ a:hover { text-decoration: underline; }
 
 .has-menu:hover .submenu,
 .has-menu:focus-within .submenu,
-.has-menu.open .submenu { display: block; }
+.has-menu.open .submenu {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .site-nav .submenu { transition: none; }
+}
 
 .nav-toggle { display: none; }
 
@@ -172,14 +203,6 @@ a:hover { text-decoration: underline; }
   height: calc(var(--ih, var(--h)) / var(--h) * 100%);
 }
 
-.img.framed::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: max(1px, calc(2 * var(--u))) solid var(--ink);
-  pointer-events: none;
-}
-
 .img.hero-bg { background: none; }
 
 /* Project-page images sit in rounded frames (36px, as in the Canva SVG exports)
@@ -244,10 +267,18 @@ a:hover { text-decoration: underline; }
     text-align: right;
   }
   .site-nav.open #nav-list { display: flex; }
-  .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; opacity: 0.7; }
+  .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
-  .site-nav .submenu { position: static; display: block; margin: 0; padding: 0 12px 0 0; border: 0; }
+  .site-nav .submenu {
+    position: static;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    margin: 0;
+    padding: 0 12px 0 0;
+    border: 0;
+  }
   .submenu a { line-height: 2; font-size: 15px; }
 
   .board {
@@ -266,7 +297,7 @@ a:hover { text-decoration: underline; }
   .display { font-size: 52px; }
 
   .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }
-  .img.framed::after, .project .img::after, .outline, .card { border-width: 1.5px; }
+  .project .img::after, .outline, .card { border-width: 1.5px; }
 
   .card { height: auto; padding: 20px 22px; border-radius: 24px; line-height: 1.15; }
 
