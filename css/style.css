@@ -128,7 +128,7 @@ a:hover { background: #e5ef4b; }
   html { scroll-behavior: auto; }
   .site-nav .submenu, .project-index a { transition: none; }
   html.reveal .el { opacity: 1; transform: none; transition: none; }
-  html.reveal .stitch rect, html.reveal .stitch.in rect { opacity: 1; animation: none; }
+  html.reveal .stitch-line rect, html.reveal .stitch-line.in rect { opacity: 1; animation: none; }
 }
 
 .nav-toggle { display: none; }
@@ -178,12 +178,18 @@ a:hover { background: #e5ef4b; }
   white-space: nowrap;
 }
 
-.title.stitch svg { display: block; width: 100%; height: auto; fill: rgb(9, 112, 184); }
-.title.stitch .stitch-narrow { display: none; }
+.stitch-line {
+  height: calc(var(--h) * var(--u));
+  overflow: visible;
+  fill: rgb(9, 112, 184);
+  /* thin white outline keeps the squares readable where they cross a photo */
+  filter: drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff);
+}
+.stitch-narrow { display: none; }
 
-.reveal .el.stitch { opacity: 1; transform: none; }
-.reveal .stitch rect { opacity: 0; transform-box: fill-box; transform-origin: center; }
-.reveal .stitch.in rect {
+.reveal .el.stitch-line { opacity: 1; transform: none; }
+.reveal .stitch-line rect { opacity: 0; transform-box: fill-box; transform-origin: center; }
+.reveal .stitch-line.in rect {
   animation: stitch-in 160ms ease-out forwards;
   animation-delay: calc(var(--i) * var(--step));
 }
@@ -386,8 +392,17 @@ a:hover { background: #e5ef4b; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
   .project-index { display: none; }
-  .title.stitch .stitch-wide { display: none; }
-  .title.stitch .stitch-narrow { display: block; }
+  /* Phones: one wrapped title, pulled up so it overlaps the bottom of the cover. */
+  .stitch-wide { display: none; }
+  .el.stitch-narrow {
+    display: block;
+    width: min(100%, calc(var(--w) * 0.75px));
+    height: auto;
+    margin-top: -28px;
+    position: relative;
+    z-index: 1;
+  }
+  .title.stitch { margin: 0; }
   section.project { scroll-margin-top: 48px; }
 
   .site-nav .submenu {

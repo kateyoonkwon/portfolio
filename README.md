@@ -35,8 +35,9 @@ pip install pillow numpy scikit-image
 python3 tools/build_titles.py
 ```
 
-Edit a title by changing its `data-text` on the `<h2 class="el title stitch">`
-(use `|` for a line break), then rerun the script. Font: Dancing Script (OFL,
+Edit a title by changing its `data-text` on the `<h2 class="title stitch">`
+(one line straddles the cover's top-left corner; `a|b` puts `b` at the bottom-right),
+then rerun the script; it also re-spaces the boxes below. Font: Dancing Script (OFL,
 tools/DancingScript-OFL.txt), used only by the build script.
 
 ## Run locally
