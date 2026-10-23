@@ -413,6 +413,12 @@ a:hover { background: #e5ef4b; }
   .carousel .track, .carousel .slide { transition: none; }
 }
 
+/* Let the larger glows spill above and below their section instead of being cut
+   off at its edge (sideways overflow stays clipped, so no horizontal scrolling). */
+@supports (overflow: clip) {
+  .board { overflow-x: clip; overflow-y: visible; }
+}
+
 /* Home: link to the projects page in the bottom-right corner. */
 .next-page {
   display: flex;
