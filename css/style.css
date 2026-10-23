@@ -124,7 +124,7 @@ a:hover { text-decoration: underline; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .site-nav .submenu, .project-index a { transition: none; }
-  .reveal .el { opacity: 1; transform: none; transition: none; }
+  html.reveal .el { opacity: 1; transform: none; transition: none; }
 }
 
 .nav-toggle { display: none; }
@@ -224,6 +224,22 @@ a:hover { text-decoration: underline; }
   font-weight: normal;
 }
 
+/* Box headings ("background:", "my impact:", "what i can do:" …).
+   Georgia Pro where installed, otherwise the near-identical system Georgia. */
+.box-title {
+  font-family: "Georgia Pro", Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  font-size: 1.3em;
+}
+
+/* "background" and "role" boxes, outlined like the cards below them. */
+.box {
+  height: calc(var(--h) * var(--u));
+  padding: calc(22 * var(--u)) calc(26 * var(--u));
+  border: max(1px, calc(2 * var(--u))) solid var(--blue);
+  border-radius: calc(36 * var(--u));
+}
+
 .caption {
   color: var(--blue);
   font-style: italic;
@@ -265,6 +281,16 @@ a:hover { text-decoration: underline; }
 
 /* SVG exports from Canva already include their own crop, corners and stroke. */
 .img.svg { background: none; border-radius: 0 !important; }
+
+/* matmerize's SVG exports have no stroke of their own, so draw the ink rim here. */
+#matmerize .img.svg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: max(1px, calc(2 * var(--u))) solid var(--ink);
+  border-radius: calc(36 * var(--u));
+  pointer-events: none;
+}
 
 /* Rounded outline drawn around a group of images. */
 .outline {
@@ -317,6 +343,7 @@ a:hover { text-decoration: underline; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
   .project-index { display: none; }
+  section.project { scroll-margin-top: 48px; }
 
   .site-nav .submenu {
     position: static;
@@ -345,9 +372,10 @@ a:hover { text-decoration: underline; }
   .display { font-size: 52px; }
 
   .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }
-  .project .img::after, .outline, .card { border-width: 1.5px; }
+  .project .img::after, .outline, .card, .box { border-width: 1.5px; }
 
-  .card { height: auto; padding: 20px 22px; border-radius: 24px; line-height: 1.15; }
+  .card, .box { height: auto; padding: 20px 22px; border-radius: 24px; }
+  .card { line-height: 1.15; }
 
   .outline { display: none; }
 
