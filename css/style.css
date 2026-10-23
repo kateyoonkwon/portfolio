@@ -191,7 +191,7 @@ a:hover { background: #e5ef4b; }
 .reveal .stitch-line rect { opacity: 0; transform-box: fill-box; transform-origin: center; }
 .reveal .stitch-line.in rect {
   animation: stitch-in 160ms ease-out forwards;
-  animation-delay: calc(var(--i) * var(--step));
+  animation-delay: var(--t);
 }
 
 @keyframes stitch-in {
