@@ -18,7 +18,7 @@ const fs = require('node:fs');
 const url = process.argv[2];
 const WIDTHS = [1024, 1280, 1366, 1536, 1920];
 const GAP = 64;          // between rows
-const LINK_GAP = 24;     // above/below an arrow, and under a small label (.kicker)
+const LINK_GAP = 24;     // around an arrow, under a .kicker, above a .subline
 const BOTTOM = 90;       // below the last row of a project
 
 const browser = await chromium.launch();
@@ -41,7 +41,7 @@ for (const w of WIDTHS) {
           h = e.offsetHeight / u; e.style.height = old;
         }
         return { y: v('--y'), h: Number.isNaN(v('--h')) ? null : v('--h'), text, boxy: e.matches('.card, .box'),
-          outline: e.matches('.outline'), link: e.matches('.arrow, .kicker'), arrow: e.matches('.arrow'), skip: e.matches('.stitch-line, .cover'), need: h };
+          outline: e.matches('.outline'), link: e.matches('.arrow, .kicker'), arrow: e.matches('.arrow, .subline'), skip: e.matches('.stitch-line, .cover'), need: h };
       }),
     };
   }));

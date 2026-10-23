@@ -166,22 +166,6 @@ a:hover { background: #e5ef4b; }
 .project-index a:hover { color: var(--ink); text-decoration: none; }
 .project-index a[aria-current] { color: var(--blue); }
 
-/* Projects page background: cross-stitch orchids in the skills-box gray, centred in
-   the window and behind everything. 198 x 230 squares, each the same size as a
-   square in the project titles (7 Canva px). */
-.orchid {
-  --u: calc(100vw / 1366);
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: -1;
-  width: calc(198 * 7 * var(--u));
-  aspect-ratio: 198 / 230;
-  transform: translate(-50%, -50%);
-  background: url("../assets/orchid.svg") center / 100% 100% no-repeat;
-  pointer-events: none;
-}
-
 /* Stitched project titles: cross-stitch cursive squares, built by tools/build_titles.py. */
 .visually-hidden {
   position: absolute;
@@ -284,11 +268,18 @@ a:hover { background: #e5ef4b; }
 
 .box-title { font-size: 1.05em; }
 
+/* Projects page type, sized like Somi's case studies (px at a 1366-wide window):
+   16 card text, 20 card labels / sublines / stat lines, 30 headings, 50 statements. */
+.project .t, .project .card { font-size: calc(16 * var(--u)); line-height: 1.25; }
+.project .box-title { font-size: 1.25em; }
+.project .card p { margin: 0; }
+
 /* Case-study patterns (after somi.framer.website):
    - .trio: three cards in a row, label centred over left-aligned text
-   - .arrow: thin downward arrow leading into the next statement
-   - .kicker: small centred label above a statement
-   - .pull: very large centred statement; .pull-note: a body-size centred line */
+   - .arrow: thin downward arrow from a problem to its insight
+   - .kicker: small centred label above a statement; .pull: very large centred statement
+   - .pull-note: centred lead-in line; .lede + .subline: left-aligned heading and its subline
+   - .stat-line: the key line inside a card, a step larger than its text */
 .trio .box-title { display: block; text-align: center; }
 
 .arrow {
@@ -297,16 +288,26 @@ a:hover { background: #e5ef4b; }
   overflow: visible;
 }
 
-.kicker { text-align: center; white-space: normal; }
+.project .kicker, .project .pull-note, .project .subline {
+  font-size: calc(20 * var(--u));
+  font-weight: 300;
+  white-space: normal;
+}
+.kicker, .pull-note { text-align: center; }
 
-.pull {
-  font-size: calc(52 * var(--u));
+.project .pull {
+  font-size: calc(50 * var(--u));
   line-height: 1.2;
   text-align: center;
   white-space: normal;
 }
 
-.pull-note { text-align: center; white-space: normal; }
+.project .lede { font-size: calc(30 * var(--u)); line-height: 1.2; white-space: normal; }
+
+.stat-line { font-size: 1.25em; line-height: 1.2; }
+
+/* A text card beside tall images keeps its text at the bottom, as on Somi's Instagram card. */
+.card.beside { display: flex; align-items: flex-end; }
 
 /* Indented list inside a card. */
 .indent { display: block; padding-left: 1.2em; }
@@ -323,7 +324,7 @@ a:hover { background: #e5ef4b; }
 /* "background" and "role" boxes, outlined like the cards below them. */
 .box {
   height: calc(var(--h) * var(--u));
-  padding: calc(26 * var(--u));
+  padding: calc(32 * var(--u));
   border: var(--line) solid var(--ink);
   border-radius: calc(36 * var(--u));
 }
@@ -392,7 +393,7 @@ a:hover { background: #e5ef4b; }
 
 .card {
   height: calc(var(--h) * var(--u));
-  padding: calc(26 * var(--u));
+  padding: calc(32 * var(--u));
   border: var(--line) solid var(--ink);
   border-radius: calc(36 * var(--u));
   font-size: calc(26.667 * var(--u));
@@ -400,7 +401,6 @@ a:hover { background: #e5ef4b; }
   white-space: pre-line;
 }
 
-.card.fill { background: var(--card-fill); }
 
 /* ---------- Mobile ---------- */
 
@@ -429,8 +429,6 @@ a:hover { background: #e5ef4b; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
   .project-index { display: none; }
-  /* Phone titles use ~5px squares; match them. */
-  .orchid { width: calc(198 * 5.25px); }
   /* Phones: one wrapped title, pulled up so it overlaps the bottom of the cover. */
   .stitch-wide { display: none; }
   .el.stitch-narrow {
@@ -468,7 +466,10 @@ a:hover { background: #e5ef4b; }
   .el { position: relative; left: auto; top: auto; width: 100%; }
 
   .t, .card, .title { font-size: 17px; }
-  .pull { font-size: 26px; }
+  .project .t, .project .card { font-size: 15px; }
+  .project .kicker, .project .pull-note, .project .subline { font-size: 17px; }
+  .project .lede { font-size: 22px; }
+  .project .pull { font-size: 26px; }
   .el.arrow { width: 19px; height: 64px; align-self: center; }
   .display { font-size: 52px; }
 

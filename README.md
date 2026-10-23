@@ -53,14 +53,12 @@ below the background/role boxes with even gaps. A new element can be added with
 titles changed.
 
 Case-study patterns (after somi.framer.website): `.card.trio` (three cards in a
-row, centred label), `svg.arrow` (thin down arrow), `.kicker` (small centred
-label), `.pull` (very large centred statement), `.pull-note` (body-size centred
-line). Borders are hairlines (`--line`, 1 Canva px) in #252e34.
-
-## Projects page background
-
-assets/orchid.svg is a cross-stitch orchid chart, traced square by square, in
-the skills-box gray. Its squares are the same size as the title squares.
+row, centred label), `svg.arrow` (thin down arrow, used once: problem → insight),
+`.kicker` + `.pull` (small label over a very large statement), `.pull-note`
+(centred lead-in line), `.lede` + `.subline` (left heading and its subline),
+`.stat-line` (key line in a card), `.card.beside` (text card next to tall images,
+text at the bottom). Project text sizes follow Somi's pages; borders are hairlines
+(`--line`, 1 Canva px) in #252e34.
 
 ## Run locally
 
