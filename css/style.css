@@ -26,7 +26,10 @@ body {
 }
 
 a { color: var(--blue); text-decoration: none; }
-a:hover { text-decoration: underline; }
+
+/* Highlighter yellow behind hovered links and selected text. */
+a:hover { background: #e5ef4b; }
+::selection { background: #e5ef4b; color: var(--ink); }
 
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
 
@@ -236,7 +239,10 @@ a:hover { text-decoration: underline; }
 }
 
 .box-title,
-.title {
+.title,
+.display,
+.site-nav a,
+.menu-btn {
   font-family: "Schoolbook", "Century Schoolbook", Georgia, serif;
   font-weight: 700;
 }
