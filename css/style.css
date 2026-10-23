@@ -321,8 +321,14 @@ a:hover { background: #e5ef4b; }
   /* --fx/--fy pick which part of the photo shows (its colours vary top to bottom);
      --zoom enlarges it so one colour fills the glow. */
   background: url("../assets/glow.webp") var(--fx, 50%) var(--fy, 30%) / calc(var(--zoom, 1) * 100%) auto no-repeat;
-  -webkit-mask-image: radial-gradient(closest-side, #000 35%, rgba(0, 0, 0, 0.55) 62%, transparent 100%);
-  mask-image: radial-gradient(closest-side, #000 35%, rgba(0, 0, 0, 0.55) 62%, transparent 100%);
+  /* A soft, squarish fade: two long linear fades (across and down) multiplied
+     together, then blurred, so there is no visible edge or oval. */
+  --fade: transparent, rgba(0, 0, 0, 0.35) 18%, #000 42%, #000 58%, rgba(0, 0, 0, 0.35) 82%, transparent;
+  -webkit-mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
+  mask-composite: intersect;
+  filter: blur(calc(28 * var(--u)));
 }
 
 /* Arrow with a label set into its stem ("the execution"). */
@@ -332,7 +338,7 @@ a:hover { background: #e5ef4b; }
   align-items: center;
   height: calc(var(--h) * var(--u));
 }
-.arrow.labeled .stem { flex: 1; width: var(--line); background: currentColor; }
+.arrow.labeled .stem { flex: 1; width: calc(19 * var(--u)); overflow: visible; }
 .arrow.labeled .label {
   padding: calc(10 * var(--u)) 0;
   font-size: calc(20 * var(--u));
@@ -406,6 +412,18 @@ a:hover { background: #e5ef4b; }
 @media (prefers-reduced-motion: reduce) {
   .carousel .track, .carousel .slide { transition: none; }
 }
+
+/* Home: link to the projects page in the bottom-right corner. */
+.next-page {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: calc(14 * var(--u));
+  font-size: calc(26.667 * var(--u));
+  color: var(--ink);
+}
+.next-page a { color: var(--ink); display: inline-flex; align-items: center; gap: calc(14 * var(--u)); padding: 0 calc(4 * var(--u)); }
+.next-page svg { width: calc(60 * var(--u)); height: calc(12 * var(--u)); overflow: visible; }
 
 /* Indented list inside a card. */
 .indent { display: block; padding-left: 1.2em; }
@@ -528,6 +546,8 @@ a:hover { background: #e5ef4b; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
   .project-index, .glow { display: none; }
+  .next-page { font-size: 17px; }
+  .next-page svg { width: 44px; }
   /* Phones: one wrapped title, pulled up so it overlaps the bottom of the cover. */
   .stitch-wide { display: none; }
   .el.stitch-narrow {
