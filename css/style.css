@@ -123,10 +123,56 @@ a:hover { text-decoration: underline; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .site-nav .submenu { transition: none; }
+  .site-nav .submenu, .project-index a { transition: none; }
+  .reveal .el { opacity: 1; transform: none; transition: none; }
 }
 
 .nav-toggle { display: none; }
+
+/* Light-gray list of projects fixed on the right of the projects page;
+   the project in view is blue. */
+.project-index {
+  --u: calc(100vw / 1366);
+  position: fixed;
+  top: 50%;
+  right: calc(18 * var(--u));
+  z-index: 5;
+  transform: translateY(-50%);
+}
+
+.project-index ul {
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+  max-width: calc(112 * var(--u));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: right;
+}
+
+.project-index a {
+  display: block;
+  font-size: max(11px, calc(13 * var(--u)));
+  line-height: 1.25;
+  color: #a9adb1;
+  transition: color 200ms ease-out;
+}
+
+.project-index a:hover { color: var(--ink); text-decoration: none; }
+.project-index a[aria-current] { color: var(--blue); }
+
+/* Project names in the home page list keep the body text style. */
+.quiet-link { color: inherit; }
+
+/* Elements fade up as they scroll into view (class set in <head> so nothing flashes). */
+.reveal .el {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms ease-out, transform 600ms ease-out;
+}
+
+.reveal .el.in { opacity: 1; transform: none; }
 
 /* ---------- Artboard ---------- */
 
@@ -270,6 +316,8 @@ a:hover { text-decoration: underline; }
   .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
+  .project-index { display: none; }
+
   .site-nav .submenu {
     position: static;
     visibility: visible;

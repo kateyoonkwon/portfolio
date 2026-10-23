@@ -1,3 +1,40 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/alpha-kappa-psi",
+      "destination": "/projects#alpha-kappa-psi",
+      "permanent": false
+    },
+    {
+      "source": "/bits-of-good",
+      "destination": "/projects#bits-of-good",
+      "permanent": false
+    },
+    {
+      "source": "/good-molecules",
+      "destination": "/projects#good-molecules",
+      "permanent": false
+    },
+    {
+      "source": "/matmerize",
+      "destination": "/projects#matmerize",
+      "permanent": false
+    },
+    {
+      "source": "/mengseats",
+      "destination": "/projects#mengseats",
+      "permanent": false
+    },
+    {
+      "source": "/minturn-whisky",
+      "destination": "/projects#minturn-whisky",
+      "permanent": false
+    },
+    {
+      "source": "/scheller-college-of-business",
+      "destination": "/projects#scheller-college-of-business",
+      "permanent": false
+    }
+  ]
 }

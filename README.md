@@ -4,18 +4,19 @@ Static rebuild of the Canva site (`katekwon.my.canva.site`, design `DAHYFWWaYeo`
 
 ```
 index.html        home (hero + about me)
-*.html            one page per project (alpha-kappa-psi.html, bits-of-good.html, …)
+projects.html     all 7 projects on one page, with a light-gray project list on the right
 css/style.css     layout + design tokens
-js/main.js        "projects" dropdown, mobile menu, missing-image fallback
-vercel.json       clean URLs (/matmerize instead of /matmerize.html)
+js/main.js        dropdown, mobile menu, scroll-in animation, project list highlight
+vercel.json       clean URLs, plus redirects from the old /<project> pages
 assets/           name-web.svg (home background) and img/
 docs/             design inventory from Canva
 ```
 
 ## How the layout works
 
-The nav (home + a "projects" dropdown) is repeated at the top of every page;
-when adding a project, add its link to the dropdown on every page.
+The nav (home + a "projects" dropdown) is repeated at the top of both pages.
+When adding a project, add its section to projects.html, its link to the
+dropdown on both pages, and to the right-hand list in projects.html.
 
 Each Canva page is a 1366px artboard. Every element carries its Canva geometry
 inline (`--x --y --w --h`, in Canva px) and CSS scales it to the viewport width,

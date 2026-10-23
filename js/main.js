@@ -26,6 +26,43 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { setMenu(false); menuBtn.blur(); }
 });
 
+// Close the mobile menu after jumping to a project on the same page.
+nav.querySelectorAll('.submenu a').forEach((a) => a.addEventListener('click', () => {
+  nav.classList.remove('open');
+  toggle.setAttribute('aria-expanded', 'false');
+  setMenu(false);
+}));
+
+// Fade elements in as they scroll into view; ones entering together are staggered.
+const els = document.querySelectorAll('.el');
+if ('IntersectionObserver' in window) {
+  const revealer = new IntersectionObserver((entries) => {
+    entries.filter((e) => e.isIntersecting).forEach((e, i) => {
+      e.target.style.transitionDelay = `${Math.min(i, 6) * 70}ms`;
+      e.target.classList.add('in');
+      revealer.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  els.forEach((el) => revealer.observe(el));
+} else {
+  els.forEach((el) => el.classList.add('in'));
+}
+
+// Projects page: highlight the project in view in the right-hand list.
+const indexLinks = [...document.querySelectorAll('.project-index a')];
+if (indexLinks.length) {
+  const tracker = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      indexLinks.forEach((a) => {
+        if (a.hash === `#${e.target.id}`) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  document.querySelectorAll('section.project').forEach((s) => tracker.observe(s));
+}
+
 document.querySelectorAll('.img img').forEach((img) => {
   const hide = () => { img.style.visibility = 'hidden'; };
   if (img.complete && img.naturalWidth === 0) hide();
