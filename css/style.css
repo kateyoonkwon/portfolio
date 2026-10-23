@@ -38,25 +38,62 @@ a:hover { text-decoration: underline; }
   pointer-events: none;
 }
 
-.site-nav ul {
+.site-nav ul { margin: 0; padding: 0; list-style: none; }
+
+#nav-list {
   --u: calc(100cqw / 1366);
   display: flex;
   justify-content: flex-end;
   gap: calc(28 * var(--u));
-  margin: 0;
   padding: calc(14 * var(--u)) calc(24 * var(--u)) 0 0;
-  list-style: none;
   pointer-events: auto;
 }
 
-.site-nav a {
+.site-nav a,
+.menu-btn {
+  font: inherit;
   font-size: max(11px, calc(15 * var(--u)));
   color: var(--blue);
   opacity: 0.55;
   white-space: nowrap;
 }
 
-.site-nav a[aria-current="true"] { opacity: 1; }
+.menu-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.menu-btn::after { content: " ▾"; font-size: 0.8em; }
+
+.site-nav [aria-current] { opacity: 1; }
+
+/* "projects" dropdown */
+.has-menu { position: relative; }
+
+.site-nav .submenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  display: none;
+  min-width: max-content;
+  margin-top: calc(8 * var(--u));
+  padding: calc(10 * var(--u)) calc(16 * var(--u));
+  background: var(--bg);
+  border: max(1px, calc(2 * var(--u))) solid var(--blue);
+  border-radius: calc(16 * var(--u));
+  text-align: right;
+}
+
+/* Invisible bridge so the menu stays open while the pointer moves down to it. */
+.submenu::before { content: ""; position: absolute; inset: calc(-10 * var(--u)) 0 100% 0; }
+
+.submenu a { display: block; line-height: 1.9; }
+
+.has-menu:hover .submenu,
+.has-menu:focus-within .submenu,
+.has-menu.open .submenu { display: block; }
 
 .nav-toggle { display: none; }
 
@@ -145,9 +182,17 @@ a:hover { text-decoration: underline; }
 
 .img.hero-bg { background: none; }
 
-/* Project-page images sit in rounded Canva frames (36px, confirmed from exported SVGs). */
-section:not(#home) .img { border-radius: calc(36 * var(--u)); }
-.img.framed::after { border-radius: inherit; }
+/* Project-page images sit in rounded frames (36px, as in the Canva SVG exports)
+   with the same 2px ink border as the other outlines. Cover images stay square. */
+.project .img:not(.cover):not(.svg) { border-radius: calc(36 * var(--u)); }
+.project .img:not(.cover):not(.svg)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: max(1px, calc(2 * var(--u))) solid var(--ink);
+  border-radius: inherit;
+  pointer-events: none;
+}
 
 /* SVG exports from Canva already include their own crop, corners and stroke. */
 .img.svg { background: none; border-radius: 0 !important; }
@@ -191,15 +236,19 @@ section:not(#home) .img { border-radius: calc(36 * var(--u)); }
     font-size: 15px;
     pointer-events: auto;
   }
-  .site-nav ul {
+  #nav-list {
     display: none;
     flex-direction: column;
     gap: 0;
     padding: 0 16px 12px;
     text-align: right;
   }
-  .site-nav.open ul { display: flex; }
-  .site-nav a { font-size: 16px; line-height: 2.2; opacity: 0.7; }
+  .site-nav.open #nav-list { display: flex; }
+  .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; opacity: 0.7; }
+  .menu-btn::after { content: ""; }
+  /* Inside the mobile menu the project list is always shown, indented under "projects". */
+  .site-nav .submenu { position: static; display: block; margin: 0; padding: 0 12px 0 0; border: 0; }
+  .submenu a { line-height: 2; font-size: 15px; }
 
   .board {
     --u: 1px;
@@ -217,7 +266,7 @@ section:not(#home) .img { border-radius: calc(36 * var(--u)); }
   .display { font-size: 52px; }
 
   .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }
-  .img.framed::after, .outline, .card { border-width: 1.5px; }
+  .img.framed::after, .project .img::after, .outline, .card { border-width: 1.5px; }
 
   .card { height: auto; padding: 20px 22px; border-radius: 24px; line-height: 1.15; }
 

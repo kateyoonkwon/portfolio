@@ -3,14 +3,19 @@
 Static rebuild of the Canva site (`katekwon.my.canva.site`, design `DAHYFWWaYeo`). Plain HTML/CSS/JS, no build step.
 
 ```
-index.html        all 8 pages as sections, in Canva order
+index.html        home (hero + about me)
+*.html            one page per project (alpha-kappa-psi.html, bits-of-good.html, …)
 css/style.css     layout + design tokens
-js/main.js        nav highlight, mobile menu, missing-image fallback
+js/main.js        "projects" dropdown, mobile menu, missing-image fallback
+vercel.json       clean URLs (/matmerize instead of /matmerize.html)
 assets/           name-web.svg (home background) and img/
 docs/             design inventory from Canva
 ```
 
 ## How the layout works
+
+The nav (home + a "projects" dropdown) is repeated at the top of every page;
+when adding a project, add its link to the dropdown on every page.
 
 Each Canva page is a 1366px artboard. Every element carries its Canva geometry
 inline (`--x --y --w --h`, in Canva px) and CSS scales it to the viewport width,

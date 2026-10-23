@@ -1,30 +1,30 @@
-// Highlight the nav link for the section in view, toggle the mobile menu,
-// and hide images that have not been supplied yet (their frame shows a placeholder).
+// Mobile menu, the "projects" dropdown, and hiding images that fail to load
+// (their frame then shows a placeholder).
 
 const nav = document.querySelector('.site-nav');
-const links = [...nav.querySelectorAll('a')];
 const toggle = nav.querySelector('.nav-toggle');
+const menu = nav.querySelector('.has-menu');
+const menuBtn = menu.querySelector('.menu-btn');
 
 toggle.addEventListener('click', () => {
   const open = nav.classList.toggle('open');
   toggle.setAttribute('aria-expanded', String(open));
 });
 
-links.forEach((a) => a.addEventListener('click', () => {
-  nav.classList.remove('open');
-  toggle.setAttribute('aria-expanded', 'false');
-}));
-
-const setCurrent = (id) => {
-  links.forEach((a) => a.setAttribute('aria-current', String(a.hash === `#${id}`)));
+const setMenu = (open) => {
+  menu.classList.toggle('open', open);
+  menuBtn.setAttribute('aria-expanded', String(open));
 };
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((e) => { if (e.isIntersecting) setCurrent(e.target.id); });
-}, { rootMargin: '-45% 0px -50% 0px' });
+menuBtn.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
 
-document.querySelectorAll('section[data-nav]').forEach((s) => observer.observe(s));
-setCurrent('home');
+document.addEventListener('click', (e) => {
+  if (!menu.contains(e.target)) setMenu(false);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { setMenu(false); menuBtn.blur(); }
+});
 
 document.querySelectorAll('.img img').forEach((img) => {
   const hide = () => { img.style.visibility = 'hidden'; };
