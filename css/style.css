@@ -309,6 +309,96 @@ a:hover { background: #e5ef4b; }
 /* A text card beside tall images keeps its text at the bottom, as on Somi's Instagram card. */
 .card.beside { display: flex; align-items: flex-end; }
 
+/* Arrow with a label set into its stem ("the execution"). */
+.arrow.labeled {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(var(--h) * var(--u));
+}
+.arrow.labeled .stem { flex: 1; width: var(--line); background: currentColor; }
+.arrow.labeled .label {
+  padding: calc(10 * var(--u)) 0;
+  font-size: calc(20 * var(--u));
+  font-weight: 300;
+  white-space: nowrap;
+}
+.arrow.labeled svg { width: calc(19 * var(--u)); height: calc(50 * var(--u)); overflow: visible; }
+
+/* Slide carousels: a strip of small slides with one shown large in the middle.
+   The strip slides so the active slide stays centred (--i, set by JS). */
+.carousel {
+  --big: calc(600 * var(--u));
+  --small: calc(150 * var(--u));
+  --gap: calc(14 * var(--u));
+  height: calc(var(--h) * var(--u));
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.carousel .track {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: calc(var(--big) * 9 / 16);
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  transform: translateX(calc(-1 * (var(--i) * (var(--small) + var(--gap)) + var(--big) / 2)));
+  transition: transform 600ms cubic-bezier(.2, .7, .2, 1);
+}
+
+.carousel .slide {
+  position: relative;
+  flex: none;
+  width: var(--small);
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  border: 0;
+  border-radius: calc(12 * var(--u));
+  overflow: hidden;
+  background: #f2f2f2;
+  cursor: pointer;
+  transition: width 600ms cubic-bezier(.2, .7, .2, 1), border-radius 600ms;
+}
+.carousel .slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: var(--line) solid var(--ink);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.carousel .slide[aria-current="true"] { width: var(--big); border-radius: calc(36 * var(--u)); cursor: default; }
+.carousel .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.carousel .controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: calc(28 * var(--u));
+  font-size: calc(16 * var(--u));
+  font-variant-numeric: tabular-nums;
+}
+.carousel .controls button {
+  padding: calc(8 * var(--u)) 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+.carousel .controls svg { display: block; width: calc(60 * var(--u)); height: calc(12 * var(--u)); overflow: visible; }
+.carousel .controls button:hover { background: #e5ef4b; }
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel .track, .carousel .slide { transition: none; }
+}
+
 /* Indented list inside a card. */
 .indent { display: block; padding-left: 1.2em; }
 
@@ -319,6 +409,7 @@ a:hover { background: #e5ef4b; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: left center;  /* when cropped to match the card beside it, crop from the right */
 }
 
 /* "background" and "role" boxes, outlined like the cards below them. */
@@ -471,6 +562,14 @@ a:hover { background: #e5ef4b; }
   .project .lede { font-size: 22px; }
   .project .pull { font-size: 26px; }
   .el.arrow { width: 19px; height: 64px; align-self: center; }
+  .el.arrow.labeled { width: auto; height: 130px; }
+  .arrow.labeled .label { font-size: 17px; }
+  .arrow.labeled svg { width: 19px; height: 40px; }
+  .el.carousel { --big: 78vw; --small: 20vw; --gap: 8px; height: calc(78vw * 9 / 16 + 56px); }
+  .carousel .controls { font-size: 15px; }
+  .carousel .slide { border-radius: 8px; }
+  .carousel .slide[aria-current="true"] { border-radius: 18px; }
+  .carousel .controls svg { width: 44px; height: 12px; }
   .display { font-size: 52px; }
 
   .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }

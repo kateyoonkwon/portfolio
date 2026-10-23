@@ -41,7 +41,7 @@ for (const w of WIDTHS) {
           h = e.offsetHeight / u; e.style.height = old;
         }
         return { y: v('--y'), h: Number.isNaN(v('--h')) ? null : v('--h'), text, boxy: e.matches('.card, .box'),
-          outline: e.matches('.outline'), link: e.matches('.arrow, .kicker'), arrow: e.matches('.arrow, .subline'), skip: e.matches('.stitch-line, .cover'), need: h };
+          outline: e.matches('.outline'), fill: e.matches('.video'), link: e.matches('.arrow, .kicker'), arrow: e.matches('.arrow, .subline'), skip: e.matches('.stitch-line, .cover'), need: h };
       }),
     };
   }));
@@ -75,7 +75,7 @@ for (const s of geo) {
   }
   let y = start; const out = {};
   rows.forEach((r, k) => {
-    const imgs = r.els.filter((e) => !e.text && e.h != null);
+    const imgs = r.els.filter((e) => !e.text && e.h != null && !e.fill);
     const top = Math.min(...r.els.map((e) => e.y));
     const imgH = imgs.length ? Math.max(...imgs.map((e) => e.y - top + e.h)) : 0;
     const boxH = Math.max(0, ...r.els.filter((e) => e.boxy).map((e) => Math.ceil(e.need) + 2));
@@ -83,7 +83,7 @@ for (const s of geo) {
     const H = Math.max(imgH, boxH, textH);
     for (const e of r.els) {
       out[e.i] = { y: +(y + (e.text ? 0 : e.y - top)).toFixed(1) };
-      if (e.boxy) out[e.i].h = H;
+      if (e.boxy || e.fill) out[e.i].h = H;
     }
     const next = rows[k + 1];
     const tight = next && (r.els.some((e) => e.link) || next.els.some((e) => e.arrow));

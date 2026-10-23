@@ -63,6 +63,39 @@ if (indexLinks.length) {
   document.querySelectorAll('section.project').forEach((s) => tracker.observe(s));
 }
 
+// Slide carousels: one slide large, the rest small. Arrows, clicks and arrow keys move
+// between slides; it also advances on its own until the visitor takes over.
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.querySelectorAll('.carousel').forEach((car) => {
+  const slides = [...car.querySelectorAll('.slide')];
+  const count = car.querySelector('.count');
+  const pad = (n) => String(n).padStart(2, '0');
+  let i = 0;
+  let auto = !reduceMotion;
+  let hovering = false;
+  let visible = false;
+
+  const show = (n) => {
+    i = (n + slides.length) % slides.length;
+    car.style.setProperty('--i', i);
+    slides.forEach((s, k) => (k === i ? s.setAttribute('aria-current', 'true') : s.removeAttribute('aria-current')));
+    count.textContent = `${pad(i + 1)} / ${pad(slides.length)}`;
+  };
+  const takeOver = () => { auto = false; };
+
+  car.querySelector('.prev').addEventListener('click', () => { takeOver(); show(i - 1); });
+  car.querySelector('.next').addEventListener('click', () => { takeOver(); show(i + 1); });
+  slides.forEach((s, k) => s.addEventListener('click', () => { takeOver(); show(k); }));
+  car.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { takeOver(); show(i + 1); }
+    if (e.key === 'ArrowLeft') { takeOver(); show(i - 1); }
+  });
+  car.addEventListener('pointerenter', () => { hovering = true; });
+  car.addEventListener('pointerleave', () => { hovering = false; });
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(car);
+  setInterval(() => { if (auto && visible && !hovering && !document.hidden) show(i + 1); }, 3500);
+});
+
 // Looping videos stay paused on their poster for visitors who prefer reduced motion.
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.querySelectorAll('video[autoplay]').forEach((v) => { v.removeAttribute('autoplay'); v.pause(); });

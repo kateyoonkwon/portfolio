@@ -57,7 +57,9 @@ row, centred label), `svg.arrow` (thin down arrow, used once: problem → insigh
 `.kicker` + `.pull` (small label over a very large statement), `.pull-note`
 (centred lead-in line), `.lede` + `.subline` (left heading and its subline),
 `.stat-line` (key line in a card), `.card.beside` (text card next to tall images,
-text at the bottom). Project text sizes follow Somi's pages; borders are hairlines
+text at the bottom), `.carousel` (slide strip, one shown large; arrows, click,
+keys, auto-advance until used), `.arrow.labeled` (arrow with a label in its stem),
+video frames take the height of the card beside them. Project text sizes follow Somi's pages; borders are hairlines
 (`--line`, 1 Canva px) in #252e34.
 
 ## Run locally
