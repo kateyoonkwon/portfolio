@@ -65,9 +65,9 @@ video frames take the height of the card beside them. Project text sizes follow 
 ## Background
 
 assets/velvet.webp is the velvet photo, enhanced (de-blocked, enlarged 3x,
-sharpened, fine grain added) and stacked with its own mirror image so it repeats
-down the page without a seam. Small blue text uses the darker `--link` navy so it
-stays readable on it; large blue type (titles, "about me :)") keeps `--blue`.
+sharpened, fine grain added), lightened to a pale aqua so the original blue
+stays readable, and stacked with its own mirror image so it repeats down the
+page without a seam.
 
 ## Run locally
 

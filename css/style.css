@@ -10,8 +10,8 @@
   --ink: #252e34;
   --card-fill: #edeced;
   --line: max(1px, calc(100vw / 1366));  /* hairline borders: 1 Canva px */
-  --bg: #98b0b7;          /* velvet's average tone, for solid panels (menu) */
-  --link: #163f63;        /* small blue text on the velvet (4.8:1); titles keep --blue */
+  --bg: #ebf5f6;          /* velvet's average tone, for solid panels (menu) */
+  --link: var(--blue);
   --font: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -162,7 +162,7 @@ a:hover { background: #e5ef4b; }
   display: block;
   font-size: max(11px, calc(13 * var(--u)));
   line-height: 1.25;
-  color: rgba(37, 46, 52, 0.6);  /* ink at 60%: readable on the velvet, still quieter */
+  color: #8f9aa0;
   transition: color 200ms ease-out;
 }
 
@@ -499,7 +499,7 @@ a:hover { background: #e5ef4b; }
 /* ---------- Mobile ---------- */
 
 @media (max-width: 760px) {
-  .site-nav { position: sticky; top: 0; background: rgba(152, 176, 183, 0.94); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); container-type: normal; }
+  .site-nav { position: sticky; top: 0; background: rgba(235, 245, 246, 0.94); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); container-type: normal; }
   .nav-toggle {
     display: block;
     margin-left: auto;
