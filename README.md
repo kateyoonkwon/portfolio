@@ -69,6 +69,13 @@ sharpened, fine grain added), lightened to a pale aqua so the original blue
 stays readable, and stacked with its own mirror image so it repeats down the
 page without a seam.
 
+## Glow highlights
+
+assets/glow.webp (the soft-light photo, de-blocked and enlarged 2x) is faded in
+radially behind key moments via `<div class="el glow">` placed right before the
+element it highlights; tools/reflow.cjs moves each glow with that element. Glows
+are hidden on phones.
+
 ## Run locally
 
 ```

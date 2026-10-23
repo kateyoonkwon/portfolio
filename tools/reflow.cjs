@@ -41,7 +41,7 @@ for (const w of WIDTHS) {
           h = e.offsetHeight / u; e.style.height = old;
         }
         return { y: v('--y'), h: Number.isNaN(v('--h')) ? null : v('--h'), text, boxy: e.matches('.card, .box'),
-          outline: e.matches('.outline'), fill: e.matches('.video'), link: e.matches('.arrow, .kicker'), arrow: e.matches('.arrow, .subline'), skip: e.matches('.stitch-line, .cover'), need: h };
+          outline: e.matches('.outline'), fill: e.matches('.video'), link: e.matches('.arrow, .kicker'), arrow: e.matches('.arrow, .subline'), skip: e.matches('.stitch-line, .cover, .glow'), glow: e.matches('.glow'), need: h };
       }),
     };
   }));
@@ -88,6 +88,11 @@ for (const s of geo) {
     const next = rows[k + 1];
     const tight = next && (r.els.some((e) => e.link) || next.els.some((e) => e.arrow));
     y += H + (tight ? LINK_GAP : GAP);
+  });
+  // a glow keeps its offset from the element right after it (the one it highlights)
+  els.forEach((e, k) => {
+    const next = els[k + 1];
+    if (e.glow && next && out[next.i]) out[e.i] = { y: +(out[next.i].y + e.y - next.y).toFixed(1) };
   });
   layout[s.id] = { out, board: Math.round(y - GAP + BOTTOM) };
 }
