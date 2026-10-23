@@ -252,7 +252,7 @@ a:hover { background: #e5ef4b; }
 /* "background" and "role" boxes, outlined like the cards below them. */
 .box {
   height: calc(var(--h) * var(--u));
-  padding: calc(22 * var(--u)) calc(26 * var(--u));
+  padding: calc(26 * var(--u));
   border: max(1px, calc(2 * var(--u))) solid var(--blue);
   border-radius: calc(36 * var(--u));
 }
@@ -321,7 +321,7 @@ a:hover { background: #e5ef4b; }
 
 .card {
   height: calc(var(--h) * var(--u));
-  padding: calc(22 * var(--u)) calc(26 * var(--u));
+  padding: calc(26 * var(--u));
   border: max(1px, calc(2 * var(--u))) solid var(--blue);
   border-radius: calc(36 * var(--u));
   font-size: calc(26.667 * var(--u));
@@ -389,7 +389,7 @@ a:hover { background: #e5ef4b; }
   .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }
   .project .img::after, .outline, .card, .box { border-width: 1.5px; }
 
-  .card, .box { height: auto; padding: 20px 22px; border-radius: 24px; }
+  .card, .box { height: auto; padding: 22px; border-radius: 24px; }
   .card { line-height: 1.15; }
 
   .outline { display: none; }
