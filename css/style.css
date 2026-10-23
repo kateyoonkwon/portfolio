@@ -165,18 +165,19 @@ a:hover { background: #e5ef4b; }
 .project-index a:hover { color: var(--ink); text-decoration: none; }
 .project-index a[aria-current] { color: var(--blue); }
 
-/* Projects page: left half of the dotted ornament, fixed in the left margin behind
-   the content. Its squares fill in from top to bottom as the page is scrolled. */
+/* Projects page: left half of the dotted ornament, full window height on the right
+   edge (its cut side flush with the edge), behind everything. Its squares fill in
+   from top to bottom as the page is scrolled. */
 .progress-ornament {
   position: fixed;
-  top: 72px;
-  left: 1.2vw;
-  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
   pointer-events: none;
 }
 
-/* Never wider than the left margin (8.5vw), never taller than the window. */
-.progress-ornament svg { display: block; height: min(calc(100vh - 100px), 52vw); width: auto; }
+.progress-ornament svg { display: block; height: 100vh; width: auto; fill: var(--card-fill); }
 
 .progress-ornament rect { opacity: 0; transition: opacity 180ms ease-out; }
 .progress-ornament rect.on { opacity: 1; }
