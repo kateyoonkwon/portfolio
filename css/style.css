@@ -128,7 +128,6 @@ a:hover { background: #e5ef4b; }
   html { scroll-behavior: auto; }
   .site-nav .submenu, .project-index a { transition: none; }
   html.reveal .el { opacity: 1; transform: none; transition: none; }
-  html.reveal .stitch-line rect, html.reveal .stitch-line.in rect { opacity: 1; animation: none; }
 }
 
 .nav-toggle { display: none; }
@@ -166,9 +165,23 @@ a:hover { background: #e5ef4b; }
 .project-index a:hover { color: var(--ink); text-decoration: none; }
 .project-index a[aria-current] { color: var(--blue); }
 
-/* Stitched project titles: Name_web-style squares in pen order (built by
-   tools/build_titles.py). When a title scrolls into view, its squares pop in one
-   after another, so the cursive writes itself. */
+/* Projects page background: cross-stitch orchids in the skills-box gray, centred in
+   the window and behind everything. 198 x 230 squares, each the same size as a
+   square in the project titles (7 Canva px). */
+.orchid {
+  --u: calc(100vw / 1366);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  width: calc(198 * 7 * var(--u));
+  aspect-ratio: 198 / 230;
+  transform: translate(-50%, -50%);
+  background: url("../assets/orchid.svg") center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+
+/* Stitched project titles: cross-stitch cursive squares, built by tools/build_titles.py. */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -182,23 +195,10 @@ a:hover { background: #e5ef4b; }
   height: calc(var(--h) * var(--u));
   overflow: visible;
   fill: rgb(9, 112, 184);
-  /* thin white outline keeps the squares readable where they cross a photo */
-  filter: drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff);
 }
 .stitch-narrow { display: none; }
 
 .reveal .el.stitch-line { opacity: 1; transform: none; }
-.reveal .stitch-line rect { opacity: 0; transform-box: fill-box; transform-origin: center; }
-.reveal .stitch-line.in rect {
-  animation: stitch-in 160ms ease-out forwards;
-  animation-delay: var(--t);
-}
-
-@keyframes stitch-in {
-  from { opacity: 0; transform: scale(0.2); }
-  to { opacity: 1; transform: none; }
-}
-
 /* Project names in the home page list keep the body text style. */
 .quiet-link { color: inherit; }
 
@@ -392,6 +392,8 @@ a:hover { background: #e5ef4b; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
   .project-index { display: none; }
+  /* Phone titles use ~5px squares; match them. */
+  .orchid { width: calc(198 * 5.25px); }
   /* Phones: one wrapped title, pulled up so it overlaps the bottom of the cover. */
   .stitch-wide { display: none; }
   .el.stitch-narrow {

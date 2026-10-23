@@ -3,10 +3,9 @@
 Each <h2 class="title stitch" data-text="..."> is rebuilt from its data-text:
   - one line            -> overlaps the cover image's top-left corner
   - two lines ("a|b")   -> "a" overlaps the top-left corner, "b" the bottom-right
-Lines sit mostly over the image, reaching at most OUTSIDE of their width past the
-corner, and are vertically centred on the image edge. A separate wrapped SVG is
-used on phones. Every square carries --t, the moment (ms) the pen reaches it,
-so CSS can reveal the squares as if the title were being written.
+A first line starts at the left edge of the background box; a second line ends
+at the right edge of the role box. The middle of each line's lowercase letters sits on
+the image edge it crosses. A separate wrapped SVG is used on phones.
 
 It then moves the background/role boxes (and everything below) so they start a
 fixed gap under the cover or the lowest title line.
@@ -20,27 +19,21 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from stitch_title import stitch  # noqa: E402
 
-FONT = str(Path(__file__).parent / 'DancingScript.ttf')
-CPE = 18           # grid squares per em (coarser = bigger squares at the same title size)
-CELL = 6           # page units (Canva px) per square on desktop
-LINE_GAP = 4       # empty rows between lines in the phone layout
-PHONE_COLS = 96    # max squares per line in the phone layout
-PAGE = (60, 1306)  # keep titles inside these x bounds
-OUTSIDE = (0.2, 100)  # a line reaches past the corner by 20% of its width, at most 100
+CELL = 7           # page units (Canva px) per square on desktop
+LINE_GAP = 3       # empty rows between lines in the phone layout
+PHONE_COLS = 72    # max squares per line in the phone layout
 GAP_BELOW = 80     # space between cover/title and the background/role boxes
-TOTAL_MS = 3200    # a whole title writes itself in about this long
 
 
-def rects(cells, offset_ms, scale):
-    return ''.join(f'<rect x="{c * 4}" y="{r * 4}" width="4" height="4" style="--t:{round((offset_ms + ms) * scale)}ms"/>'
-                   for c, r, ms in cells)
+def rects(cells):
+    return ''.join(f'<rect x="{c * 4}" y="{r * 4}" width="4" height="4"/>' for c, r in cells)
 
 
 def wrap(text):
     lines, cur = [], ''
     for word in text.replace('|', ' ').split():
         trial = (cur + ' ' + word).strip()
-        if cur and stitch(FONT, trial, CPE)['w'] > PHONE_COLS:
+        if cur and stitch(trial)['w'] > PHONE_COLS:
             lines.append(cur)
             cur = word
         else:
@@ -49,14 +42,13 @@ def wrap(text):
 
 
 def stack(lines):
-    parts = [stitch(FONT, t, CPE) for t in lines]
+    parts = [stitch(t) for t in lines]
     w = max(p['w'] for p in parts)
-    cells, y, t0 = [], 0, 0
+    cells, y = [], 0
     for p in parts:
         x0 = (w - p['w']) // 2
-        cells += [(c + x0, r + y, ms + t0) for c, r, ms in p['cells']]
+        cells += [(c + x0, r + y) for c, r in p['cells']]
         y += p['h'] + LINE_GAP
-        t0 = cells[-1][2] + 260
     return w, y - LINE_GAP, cells
 
 
@@ -70,29 +62,24 @@ def build_section(sec_match):
 
     m = re.search(r'<h2 class="(?:el )?title stitch"[^>]*?data-text="([^"]+)">.*?</h2>', sec, re.S)
     text = m.group(1)
-    lines = [stitch(FONT, t, CPE) for t in text.split('|')]
-    offsets, t0 = [], 0
-    for line in lines:                       # the second part is written after the first
-        offsets.append(t0)
-        t0 += line['cells'][-1][2] + 260
-    scale = TOTAL_MS / (t0 - 260)
+    lines = [stitch(t) for t in text.split('|')]
+    boxes = [tuple(map(float, m)) for m in re.findall(
+        r'class="el t box" style="--x:([\d.]+);--y:[\d.]+;--w:([\d.]+)', sec)]
+    box_left = min(b[0] for b in boxes); box_right = max(b[0] + b[1] for b in boxes)
 
     svgs, lowest = [], bottom
-    for i, (line, (cx, cy)) in enumerate(zip(lines, corners)):
+    for i, (line, (_, cy)) in enumerate(zip(lines, corners)):
         w, h = line['w'] * CELL, line['h'] * CELL
-        reach = min(OUTSIDE[0] * w, OUTSIDE[1])
-        x = cx - reach if i == 0 else cx + reach - w
-        x = min(max(x, PAGE[0]), PAGE[1] - w)
-        y = cy - h / 2
+        x = box_left if i == 0 else box_right - w
+        y = cy - (line['baseline'] - 3) * CELL   # middle of the x-height on the image edge
         lowest = max(lowest, y + h)
         svgs.append(f'<svg class="el stitch-line stitch-wide" style="--x:{x:.1f};--y:{y:.1f};--w:{w};--h:{h}" '
                     f'viewBox="0 0 {line["w"] * 4} {line["h"] * 4}" aria-hidden="true" focusable="false">'
-                    f'{rects(line["cells"], offsets[i], scale)}</svg>')
+                    f'{rects(line["cells"])}</svg>')
 
     pw, ph, pcells = stack(wrap(text))
-    pscale = TOTAL_MS / pcells[-1][2]
     svgs.append(f'<svg class="el stitch-line stitch-narrow" style="--x:0;--y:0;--w:{pw * CELL};--h:{ph * CELL}" '
-                f'viewBox="0 0 {pw * 4} {ph * 4}" aria-hidden="true" focusable="false">{rects(pcells, 0, pscale)}</svg>')
+                f'viewBox="0 0 {pw * 4} {ph * 4}" aria-hidden="true" focusable="false">{rects(pcells)}</svg>')
 
     h2 = (f'<h2 class="title stitch" data-text="{text}"><span class="visually-hidden">{text.replace("|", " ")}</span>'
           + ''.join(svgs) + '</h2>')

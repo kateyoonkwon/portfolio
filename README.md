@@ -27,18 +27,22 @@ single-column flow in source order.
 
 ## Stitched project titles
 
-Project titles on projects.html are pixel squares (like Name_web.svg) that write
-themselves when scrolled into view. They are generated, not hand-drawn:
+Project titles on projects.html are cross-stitch cursive squares, built from a
+hand-made cross-stitch alphabet (tools/cursive_glyphs.json). They are generated:
 
 ```
-pip install pillow numpy scikit-image
 python3 tools/build_titles.py
 ```
 
 Edit a title by changing its `data-text` on the `<h2 class="title stitch">`
-(one line straddles the cover's top-left corner; `a|b` puts `b` at the bottom-right),
-then rerun the script; it also re-spaces the boxes below. Font: Dancing Script (OFL,
-tools/DancingScript-OFL.txt), used only by the build script.
+(one line starts at the left edge of the text boxes; `a|b` puts `b` at the
+bottom-right, ending at the right edge of the text boxes), then rerun the
+script; it also re-spaces the boxes below. Lowercase a–z and spaces only.
+
+## Projects page background
+
+assets/orchid.svg is a cross-stitch orchid chart, traced square by square, in
+the skills-box gray. Its squares are the same size as the title squares.
 
 ## Run locally
 
