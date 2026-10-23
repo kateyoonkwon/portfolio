@@ -73,7 +73,8 @@ page without a seam.
 
 assets/glow.webp (the soft-light photo, de-blocked and enlarged 2x) is faded in
 radially behind key moments via `<div class="el glow">` placed right before the
-element it highlights; tools/reflow.cjs moves each glow with that element. Glows
+element it highlights (`--fx`/`--fy` pick which part of the photo, `--zoom` how
+close); tools/reflow.cjs moves each glow with that element. Glows
 are hidden on phones.
 
 ## Run locally
