@@ -43,6 +43,6 @@ Drop each file into `assets/img/` with that name. If it is a Canva SVG export
 
 ## Open items
 
-- **Font**: DM Sans (regular + italic), loaded from Google Fonts in `index.html`.
+- **Fonts**: DM Sans (body, Google Fonts). Headings use Century Schoolbook Bold when installed, otherwise C059 Bold (free metric-compatible clone, AGPL with font exception) from `assets/fonts/` — keep its license files alongside it.
 - Nav styling is approximated from Canva's page previews.
 - Cockpit photo: on hold, not placed.

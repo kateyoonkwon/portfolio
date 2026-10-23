@@ -224,13 +224,24 @@ a:hover { text-decoration: underline; }
   font-weight: normal;
 }
 
-/* Box headings ("background:", "my impact:", "what i can do:" …).
-   Georgia Pro where installed, otherwise the near-identical system Georgia. */
-.box-title {
-  font-family: "Georgia Pro", Georgia, "Times New Roman", serif;
+/* Headings: box titles ("background:", "my impact:", "what i can do:" …) and the
+   project titles under each cover. Century Schoolbook Bold where installed,
+   otherwise C059 Bold, a free metric-compatible clone served with the site. */
+@font-face {
+  font-family: "Schoolbook";
   font-weight: 700;
-  font-size: 1.3em;
+  font-display: swap;
+  src: local("Century Schoolbook Bold"), local("CenturySchoolbook-Bold"),
+       url("../assets/fonts/C059-Bold.woff2") format("woff2");
 }
+
+.box-title,
+.title {
+  font-family: "Schoolbook", "Century Schoolbook", Georgia, serif;
+  font-weight: 700;
+}
+
+.box-title { font-size: 1.05em; }
 
 /* "background" and "role" boxes, outlined like the cards below them. */
 .box {
@@ -304,9 +315,7 @@ a:hover { text-decoration: underline; }
 
 .card {
   height: calc(var(--h) * var(--u));
-  display: flex;
-  align-items: center;
-  padding: calc(18 * var(--u)) calc(26 * var(--u));
+  padding: calc(22 * var(--u)) calc(26 * var(--u));
   border: max(1px, calc(2 * var(--u))) solid var(--blue);
   border-radius: calc(36 * var(--u));
   font-size: calc(26.667 * var(--u));
