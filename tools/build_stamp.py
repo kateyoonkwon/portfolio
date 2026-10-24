@@ -1,4 +1,5 @@
-"""Build the cross-stitch flower stamp (assets/stamp.svg) and the site icons.
+"""Build the cross-stitch flower (assets/flower.svg, used on the page), the flower
+stamp (assets/stamp.svg) and the site icons (made from the stamp).
 
 The flower is the traced cross-stitch chart (tools/flower_cells.json, [col, row]).
 Around it, on the same grid: 2 squares of paper, a 1-square frame line, 2 more
@@ -56,6 +57,13 @@ def runs(cells):
 svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W * 8}" height="{H * 8}" '
        f'shape-rendering="crispEdges"><path fill="{BLUE}" d="{runs(ink)}"/></svg>\n')
 (ROOT / 'assets/stamp.svg').write_text(svg)
+
+fl = set(map(tuple, flower))
+W0, H0, W, H = W, H, fw, fh          # runs() reads W/H: reuse it for the bare flower
+(ROOT / 'assets/flower.svg').write_text(
+    f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {fw} {fh}" width="{fw * 8}" height="{fh * 8}" '
+    f'shape-rendering="crispEdges"><path fill="{BLUE}" d="{runs(fl)}"/></svg>\n')
+W, H = W0, H0
 
 
 def png(size, path):
