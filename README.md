@@ -50,9 +50,9 @@ to the dropdown in both files and to the side list in `projects.html`.
 | `.pull-note` | centred lead-in line |
 | `.lede` + `.subline` | left-aligned heading with its subline |
 | `.stat-line` | the key line in a card, a step larger |
-| `.carousel` | slide strip with one slide shown large (arrows, click, keys, auto-advance) |
+| `.carousel` | slide strip with one slide shown large (arrows, click, keys, auto-advance); 16:9 slides, or `.portrait-slides` for 4:5 |
 | `.glow` | soft-light highlight placed right before the element it highlights |
-| `.img.cover` | square-cornered cover image; other images get rounded, outlined frames |
+| `.img.cover` | square-cornered 3:2 cover, the same frame in every project (775.6 × 517.1, centred); other images get rounded, outlined frames |
 
 Type sizes on the projects page follow Somi Park's case studies
 (somi.framer.website): 16 / 20 / 30 / 50px at a 1366px window.
@@ -65,7 +65,7 @@ Run from the repo root. Serve the site locally first for `reflow.cjs`:
 | Command | What it does |
 |---|---|
 | `python3 tools/build_titles.py` | Rebuilds the cross-stitch project titles from each `<h2 class="title stitch" data-text="…">` (`a|b` = two lines) and moves the boxes below to fit. Uses `stitch_title.py` and the traced alphabet in `cursive_glyphs.json`. |
-| `NODE_PATH=$(npm root -g) node tools/reflow.cjs http://localhost:8080/projects.html` | Re-spaces each project after copy edits: sizes boxes to their text (measured at five window widths) and re-stacks rows with even gaps. New elements can be added with `--y:0`. Needs the `playwright` package. |
+| `NODE_PATH=$(npm root -g) node tools/reflow.cjs http://localhost:8080/projects.html` | Re-spaces each project after copy edits: sizes boxes to their text (measured at five window widths) and re-stacks rows with even gaps. New elements can be added with `--y:0`. A new `.glow` written just before it takes its `--y` as an offset from that element. Needs the `playwright` package. |
 | `python3 tools/build_stamp.py` | Rebuilds the cross-stitch flower (`flower.svg`), the stamp (`stamp.svg`) and the site icons from `flower_cells.json`. Needs Pillow. |
 
 Typical copy edit: change the text in `projects.html`, run `reflow.cjs`, check

@@ -12,7 +12,8 @@
 //  - a video takes the row's height (it crops itself to fit);
 //  - arrows, small labels (.kicker) and sublines sit closer to their neighbours;
 //  - a glow keeps its offset from the element right after it (the one it lights);
-//  - a new element can be written with --y:0; it slots in after the one before it.
+//  - a new element can be written with --y:0; it slots in after the element before
+//    it (glows aside). A new glow lighting it is written with --y as that offset.
 // The cover and the stitched title are left alone (see tools/build_titles.py).
 const { chromium } = require('playwright');
 const fs = require('node:fs');
@@ -62,7 +63,11 @@ async function measure(browser, url, width) {
 
 // New --y / --h for one project's elements, and the project's new height.
 function layout(els) {
-  els.forEach((e, k) => { if (e.y === 0 && k) e.y = els[k - 1].y + 10; });
+  els.forEach((e) => { e.y0 = e.y; });
+  els.forEach((e, k) => {
+    const prev = els.slice(0, k).reverse().find((p) => !p.glow);
+    if (e.y === 0 && prev) e.y = prev.y + 10;
+  });
   const body = els.filter((e) => !e.skip);
   const start = Math.min(...body.filter((e) => e.boxy).map((e) => e.y));
 
@@ -94,7 +99,7 @@ function layout(els) {
 
   els.forEach((e, k) => {
     const next = els[k + 1];
-    if (e.glow && next && out[next.i]) out[e.i] = { y: +(out[next.i].y + e.y - next.y).toFixed(1) };
+    if (e.glow && next && out[next.i]) out[e.i] = { y: +(out[next.i].y + e.y0 - next.y0).toFixed(1) };
   });
   return { out, board: Math.round(y - GAP + BOTTOM) };
 }
