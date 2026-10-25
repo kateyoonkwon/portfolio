@@ -169,7 +169,9 @@ a:hover { background: #e5ef4b; }
 .project-index a:hover { color: var(--ink); text-decoration: none; }
 .project-index a[aria-current] { color: var(--link); }
 
-/* Stitched project titles: cross-stitch cursive squares, built by tools/build_titles.py. */
+/* Stitched project titles: cross-stitch cursive squares, built by tools/build_titles.py.
+   .cover-group wraps a project's cover(s) and title; it only affects the phone layout. */
+.cover-group { display: contents; }
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -504,7 +506,7 @@ a:hover { background: #e5ef4b; }
   position: absolute;
   inset: 0;
   border: var(--line) solid var(--ink);
-  border-radius: calc(36 * var(--u));
+  border-radius: 12.3% / 7.9%;  /* the SVGs' own corner: 27 of 219 x 341 */
   pointer-events: none;
 }
 
@@ -555,21 +557,62 @@ a:hover { background: #e5ef4b; }
   .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; }
   .menu-btn::after { content: ""; }
   /* Inside the mobile menu the project list is always shown, indented under "projects". */
-  .project-index, .glow { display: none; }
+  .project-index { display: none; }
+
+  /* Glows: a zero-height marker in the flow whose ::before spreads the glow over the
+     content after it (desktop sizes them on the artboard instead). */
+  .el.glow {
+    display: block;
+    height: 0;
+    margin-bottom: -20px;
+    background: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    filter: none;
+  }
+  .el.glow::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    right: -16px;
+    top: -40px;
+    height: calc(var(--h) * 0.42px);
+    background: url("../assets/glow.webp") var(--fx, 50%) var(--fy, 30%) / calc(var(--zoom, 1) * 100%) auto no-repeat;
+    -webkit-mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
+    mask-composite: intersect;
+    filter: blur(14px);
+  }
   .next-page { font-size: 17px; }
   .el.stamp { width: 95px; height: auto; aspect-ratio: 19 / 24; }
   .next-page svg { width: 44px; }
-  /* Phones: one wrapped title, pulled up so it overlaps the bottom of the cover. */
-  .stitch-wide { display: none; }
-  .el.stitch-narrow {
+  /* Phones: titles keep the desktop layout, with smaller squares (--sq): the first
+     line half over the cover's top-left corner, a second line over its bottom-right. */
+  .cover-group {
+    --sq: min(2.4px, calc((100vw - 32px) / 150));
     display: block;
-    width: min(100%, calc(var(--w) * 0.75px));
-    height: auto;
-    margin-top: -28px;
     position: relative;
-    z-index: 1;
+    padding-top: calc(16 * var(--sq) * 0.6);
   }
+  .cover-group:has(.stitch-wide:nth-of-type(2)) { padding-bottom: calc(16 * var(--sq) * 0.6); }
   .title.stitch { margin: 0; }
+  .stitch-narrow { display: none; }
+  .cover-group .el.stitch-wide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: calc(var(--w) / 7 * var(--sq));
+    height: auto;
+  }
+  .cover-group .el.stitch-wide:nth-of-type(2) { top: auto; left: auto; right: 0; bottom: 0; }
+
+  /* About: the portrait takes half the width, on the right, with its caption under it. */
+  .page:not(.page-hero) .el.img.m-center, .page:not(.page-hero) .el.caption { width: 50%; align-self: flex-end; }
+
+  /* alpha kappa psi: the three covers stay in one row, as on desktop. */
+  #alpha-kappa-psi .m-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
   section.project { scroll-margin-top: 48px; }
 
   .site-nav .submenu {
