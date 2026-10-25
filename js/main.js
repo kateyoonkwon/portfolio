@@ -2,7 +2,7 @@
 //
 //  1. Navigation        phone menu button and the "projects" dropdown
 //  2. Scroll reveal     elements fade up as they come into view
-//  3. Project list      projects page: highlight the project in view
+//  3. Project list      projects page: highlight the project in view, centre its cover on click
 //  4. Carousels         slide strips with one slide shown large
 //  5. Media fallbacks   reduced motion and images that fail to load
 
@@ -70,6 +70,19 @@ if (indexLinks.length) {
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
   document.querySelectorAll('section.project').forEach((s) => tracker.observe(s));
+
+  // Clicking a project scrolls its cover to the middle of the screen (smoothly,
+  // unless reduced motion is on: see html's scroll-behavior) and updates the URL.
+  // The cover's position is measured without its fade-in offset (section 2).
+  indexLinks.forEach((a) => a.addEventListener('click', (e) => {
+    const cover = document.querySelector(`${a.hash} .cover`);
+    if (!cover) return;
+    e.preventDefault();
+    const box = cover.getBoundingClientRect();
+    const fade = new DOMMatrixReadOnly(getComputedStyle(cover).transform).m42;
+    scrollTo({ top: scrollY + box.top - fade + box.height / 2 - innerHeight / 2 });
+    history.pushState(null, '', a.hash);
+  }));
 }
 
 // 4. Carousels --------------------------------------------------------------
