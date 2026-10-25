@@ -2,7 +2,7 @@
 //
 //  1. Navigation        phone menu button and the "projects" dropdown
 //  2. Scroll reveal     elements fade up as they come into view
-//  3. Project list      projects page: highlight the project in view, centre its cover on click
+//  3. Project links     links to a project centre its cover; side list highlights the one in view
 //  4. Carousels         slide strips with one slide shown large
 //  5. Media fallbacks   reduced motion and images that fail to load
 
@@ -57,8 +57,37 @@ if ('IntersectionObserver' in window) {
   els.forEach((el) => el.classList.add('in'));
 }
 
-// 3. Project list -----------------------------------------------------------
+// 3. Project links ----------------------------------------------------------
+// Any link to a project (side list, "projects" dropdown, the home page's list)
+// lands with that project's cover centred on screen. The cover's position is
+// measured without its fade-in offset (section 2).
 
+const centreCover = (hash, behavior) => {
+  const cover = document.getElementById(hash.slice(1))?.querySelector('.cover');
+  if (!cover) return false;
+  const box = cover.getBoundingClientRect();
+  const fade = new DOMMatrixReadOnly(getComputedStyle(cover).transform).m42;
+  scrollTo({ top: scrollY + box.top - fade + box.height / 2 - innerHeight / 2, behavior });
+  return true;
+};
+
+// Links within this page glide there (smoothly, unless reduced motion is on: see
+// html's scroll-behavior). Links from the home page arrive at the top of the
+// project (the browser's own jump); centre it once the page and fonts have loaded.
+const page = (path) => path.replace(/(\/index)?\.html$/, '').replace(/\/$/, '');
+document.querySelectorAll('a[href*="#"]').forEach((a) => a.addEventListener('click', (e) => {
+  if (page(a.pathname) !== page(location.pathname) || !centreCover(a.hash)) return;
+  e.preventDefault();
+  history.pushState(null, '', a.hash);
+}));
+addEventListener('hashchange', () => centreCover(location.hash));   // a hash typed into the address bar
+if (location.hash) {
+  addEventListener('load', () => document.fonts.ready.then(() => {
+    requestAnimationFrame(() => centreCover(location.hash, 'instant'));
+  }));
+}
+
+// Highlight the project in view in the side list.
 const indexLinks = [...document.querySelectorAll('.project-index a')];
 if (indexLinks.length) {
   const tracker = new IntersectionObserver((entries) => {
@@ -70,19 +99,6 @@ if (indexLinks.length) {
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
   document.querySelectorAll('section.project').forEach((s) => tracker.observe(s));
-
-  // Clicking a project scrolls its cover to the middle of the screen (smoothly,
-  // unless reduced motion is on: see html's scroll-behavior) and updates the URL.
-  // The cover's position is measured without its fade-in offset (section 2).
-  indexLinks.forEach((a) => a.addEventListener('click', (e) => {
-    const cover = document.querySelector(`${a.hash} .cover`);
-    if (!cover) return;
-    e.preventDefault();
-    const box = cover.getBoundingClientRect();
-    const fade = new DOMMatrixReadOnly(getComputedStyle(cover).transform).m42;
-    scrollTo({ top: scrollY + box.top - fade + box.height / 2 - innerHeight / 2 });
-    history.pushState(null, '', a.hash);
-  }));
 }
 
 // 4. Carousels --------------------------------------------------------------

@@ -11,7 +11,7 @@ is the website.
 index.html           home: name hero, photo grid, about me
 projects.html        all seven case studies on one page
 css/style.css        all styles, in numbered sections (contents at the top)
-js/main.js           navigation, scroll fade-in, project list, carousels
+js/main.js           navigation, scroll fade-in, project links, carousels
 vercel.json          clean URLs and redirects from the old /<project> pages
 assets/              backgrounds, signature, flower, icons, fonts
 assets/img/          project and home-page images
