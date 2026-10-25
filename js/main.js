@@ -72,8 +72,7 @@ const centreCover = (hash, behavior) => {
 };
 
 // Links within this page glide there (smoothly, unless reduced motion is on: see
-// html's scroll-behavior). Links from the home page arrive at the top of the
-// project (the browser's own jump); centre it once the page and fonts have loaded.
+// html's scroll-behavior).
 const page = (path) => path.replace(/(\/index)?\.html$/, '').replace(/\/$/, '');
 document.querySelectorAll('a[href*="#"]').forEach((a) => a.addEventListener('click', (e) => {
   if (page(a.pathname) !== page(location.pathname) || !centreCover(a.hash)) return;
@@ -81,10 +80,25 @@ document.querySelectorAll('a[href*="#"]').forEach((a) => a.addEventListener('cli
   history.pushState(null, '', a.hash);
 }));
 addEventListener('hashchange', () => centreCover(location.hash));   // a hash typed into the address bar
-if (location.hash) {
-  addEventListener('load', () => document.fonts.ready.then(() => {
-    requestAnimationFrame(() => centreCover(location.hash, 'instant'));
-  }));
+
+// Arriving from another page: projects.html's <head> held the hash back so the
+// browser wouldn't jump to the project's top. Centre the cover, and keep it centred
+// while fonts and images load and shift the layout, until the visitor takes over.
+// The hash goes back in the address once the page has loaded (earlier, the browser
+// would still act on it).
+const landing = window.landingHash;
+if (landing) {
+  const land = () => {
+    if (!centreCover(landing, 'instant')) document.getElementById(landing.slice(1))?.scrollIntoView();
+  };
+  const follow = new ResizeObserver(land);
+  const stop = () => follow.disconnect();
+  ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, stop, { once: true, passive: true }));
+  addEventListener('load', () => setTimeout(() => {
+    stop();
+    history.replaceState(null, '', landing);
+  }, 1000));
+  document.fonts.ready.then(() => follow.observe(document.body));   // observing starts with one land()
 }
 
 // Highlight the project in view in the side list.
