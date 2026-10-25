@@ -26,8 +26,8 @@
   --ink: #252e34;                           /* body text, borders, arrows */
   --stitch: #0970b8;                        /* cross-stitch squares (Name_web.svg's blue) */
   --highlight: #e5ef4b;                     /* hovered links, selected text */
-  --bg: #d6dfe1;                            /* the velvet's average tone */
-  --panel: rgba(214, 223, 225, 0.94);       /* translucent velvet for the phone nav bar */
+  --bg: #f4f1ec;                            /* page background: the cream paper's main colour */
+  --panel: rgba(244, 241, 236, 0.94);       /* translucent cream for the phone nav bar */
   --muted: #7b878d;                         /* the projects page's side list */
   --line: max(1px, calc(100vw / 1366));     /* hairline borders: 1 Canva px */
   --radius: 36;                             /* card and frame corners, in Canva px */
@@ -52,11 +52,11 @@
 
 html { scroll-behavior: smooth; }
 
-/* Velvet background (assets/velvet.webp): the photo stacked with its mirror image,
-   so it repeats down the page without a seam. It scrolls with the page. */
+/* Solid cream background. (The earlier velvet texture is kept in assets/velvet.webp;
+   to bring it back: background: var(--bg) url("../assets/velvet.webp") top center / 100% auto repeat-y.) */
 body {
   margin: 0;
-  background: var(--bg) url("../assets/velvet.webp") top center / 100% auto repeat-y;
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
   -webkit-font-smoothing: antialiased;

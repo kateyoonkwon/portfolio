@@ -73,8 +73,9 @@ the page.
 
 ## Assets
 
-- **Background** (`velvet.webp`): the velvet photo, enhanced and lightened, stacked
-  with its mirror image so it repeats down the page without a seam.
+- **Background**: solid cream `#f4f1ec` (the `--bg` token), the main colour of the
+  cream paper photo. The earlier velvet texture is kept in `velvet.webp` (see the
+  note in `style.css` section 2 to switch back).
 - **Glows** (`glow.webp`): the soft-light photo. Each `.glow` picks a part of it
   (`--fx`/`--fy`) and a zoom (`--zoom`).
 - **Signature** (`name-web.svg`): the home page hero.
