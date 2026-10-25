@@ -110,12 +110,13 @@ a:hover { background: var(--highlight); }
 .project .board { margin-top: calc(0.83 * 26.667 * var(--u)); }
 
 /* A link to a project (#name), from any page, lands with its cover centred on screen:
-   the browser's own jump stops scroll-margin-top short of the section. That is half
-   the screen minus the cover's centre: the space above (22.13) + the cover's top
-   (153.2) + half its height (517.1 / 2). main is a container so that 100cqw here is
-   the page width, as on the board. */
+   the browser's own jump stops scroll-margin-top short of the section, i.e. half the
+   screen minus the cover's centre (the space above + the cover's --y + half its --h).
+   main is a container so that 100cqw here is the page width, as on the board. */
 main { container-type: inline-size; }
-section.project { scroll-margin-top: calc(50svh - 433.88 * 100cqw / 1366); }
+section.project {
+  scroll-margin-top: calc(50svh - (0.83 * 26.667 + 153.2 + 517.1 / 2) * 100cqw / 1366);
+}
 
 /* Glows may spill above and below their section; sideways overflow stays clipped. */
 @supports (overflow: clip) {
@@ -283,9 +284,8 @@ section.project { scroll-margin-top: calc(50svh - 433.88 * 100cqw / 1366); }
 .project .box-title { font-size: 1.25em; }
 
 .project .kicker,
-.project .pull-note,
 .project .subline { font-size: calc(20 * var(--u)); font-weight: 300; white-space: normal; }
-.kicker, .pull-note { text-align: center; }                 /* small label / lead-in line */
+.kicker { text-align: center; }                             /* small label */
 
 .project .lede { font-size: calc(30 * var(--u)); line-height: 1.2; white-space: normal; }
 
@@ -590,18 +590,12 @@ section.project { scroll-margin-top: calc(50svh - 433.88 * 100cqw / 1366); }
   }
   .submenu a { line-height: 2; font-size: 15px; }
   .project-index { display: none; }
-  /* Cover centred on arrival (see section 3): the board's top padding, the title's
-     space above the cover, and half the 3:2 cover's height. */
-  section.project {
-    --sq: min(2.4px, calc((100vw - 32px) / 150));
-    scroll-margin-top: calc(50svh - 24px - 9.6 * var(--sq) - (100cqw - 32px) / 3);
-  }
 
   /* Type */
   .t, .card { font-size: 17px; }
   .display { font-size: 52px; }
   .project .t, .project .card { font-size: 15px; }
-  .project .kicker, .project .pull-note, .project .subline { font-size: 17px; }
+  .project .kicker, .project .subline { font-size: 17px; }
   .project .lede { font-size: 22px; }
   .project .pull { font-size: 26px; }
   .next-page { font-size: 17px; }
@@ -629,8 +623,15 @@ section.project { scroll-margin-top: calc(50svh - 433.88 * 100cqw / 1366); }
   .el.stamp { width: 95px; aspect-ratio: 19 / 24; }
 
   /* Titles keep the desktop layout with smaller squares (--sq): the first line half
-     over the cover's top-left corner, a second line over its bottom-right. */
-  .cover-group {             /* --sq: set on section.project, above */
+     over the cover's top-left corner, a second line over its bottom-right.
+     Links to a project still land with the cover centred (see section 3): here the
+     cover's centre is the board's top padding + the title's space above the cover
+     + half the cover's height (3:2, so a third of its width). */
+  section.project {
+    --sq: min(2.4px, calc((100vw - 32px) / 150));
+    scroll-margin-top: calc(50svh - 24px - 16 * 0.6 * var(--sq) - (100cqw - 32px) / 3);
+  }
+  .cover-group {
     position: relative;
     display: block;
     padding-top: calc(16 * var(--sq) * 0.6);

@@ -36,6 +36,11 @@ At 760px wide and below (phones) the artboard is switched off and elements flow
 in the order they appear in the HTML. That section of `style.css` lists the
 phone-only adjustments.
 
+Every link to a project (`projects.html#<project>`) lands with its cover centred
+on screen. This is plain CSS: each project section's `scroll-margin-top` is half the
+screen minus the cover's centre (`style.css` section 3, and the phones section). If
+the cover frame's position or size changes, update those formulas.
+
 The navigation is written out in both HTML files. When adding a project, add it
 to the dropdown in both files and to the side list in `projects.html`.
 
@@ -47,7 +52,6 @@ to the dropdown in both files and to the side list in `projects.html`.
 | `.card` | outlined text card; `.card.trio` three in a row, `.card.beside` text at the bottom next to tall images |
 | `.arrow`, `.arrow.labeled` | thin down arrow; with a label in its stem ("the execution") |
 | `.kicker` + `.pull` | small label over a very large statement |
-| `.pull-note` | centred lead-in line |
 | `.lede` + `.subline` | left-aligned heading with its subline |
 | `.stat-line` | the key line in a card, a step larger |
 | `.carousel` | slide strip with one slide shown large (arrows, click, keys, auto-advance); 16:9 slides, or `.portrait-slides` for 4:5 |
