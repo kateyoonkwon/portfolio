@@ -109,6 +109,14 @@ a:hover { background: var(--highlight); }
    heading margin used to add). */
 .project .board { margin-top: calc(0.83 * 26.667 * var(--u)); }
 
+/* A link to a project (#name), from any page, lands with its cover centred on screen:
+   the browser's own jump stops scroll-margin-top short of the section. That is half
+   the screen minus the cover's centre: the space above (22.13) + the cover's top
+   (153.2) + half its height (517.1 / 2). main is a container so that 100cqw here is
+   the page width, as on the board. */
+main { container-type: inline-size; }
+section.project { scroll-margin-top: calc(50svh - 433.88 * 100cqw / 1366); }
+
 /* Glows may spill above and below their section; sideways overflow stays clipped. */
 @supports (overflow: clip) {
   .board { overflow-x: clip; overflow-y: visible; }
@@ -582,7 +590,12 @@ a:hover { background: var(--highlight); }
   }
   .submenu a { line-height: 2; font-size: 15px; }
   .project-index { display: none; }
-  section.project { scroll-margin-top: 48px; }   /* land below the sticky bar */
+  /* Cover centred on arrival (see section 3): the board's top padding, the title's
+     space above the cover, and half the 3:2 cover's height. */
+  section.project {
+    --sq: min(2.4px, calc((100vw - 32px) / 150));
+    scroll-margin-top: calc(50svh - 24px - 9.6 * var(--sq) - (100cqw - 32px) / 3);
+  }
 
   /* Type */
   .t, .card { font-size: 17px; }
@@ -617,8 +630,7 @@ a:hover { background: var(--highlight); }
 
   /* Titles keep the desktop layout with smaller squares (--sq): the first line half
      over the cover's top-left corner, a second line over its bottom-right. */
-  .cover-group {
-    --sq: min(2.4px, calc((100vw - 32px) / 150));
+  .cover-group {             /* --sq: set on section.project, above */
     position: relative;
     display: block;
     padding-top: calc(16 * var(--sq) * 0.6);

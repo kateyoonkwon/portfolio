@@ -2,7 +2,7 @@
 //
 //  1. Navigation        phone menu button and the "projects" dropdown
 //  2. Scroll reveal     elements fade up as they come into view
-//  3. Project links     links to a project centre its cover; side list highlights the one in view
+//  3. Project list      projects page: highlight the project in view
 //  4. Carousels         slide strips with one slide shown large
 //  5. Media fallbacks   reduced motion and images that fail to load
 
@@ -57,51 +57,10 @@ if ('IntersectionObserver' in window) {
   els.forEach((el) => el.classList.add('in'));
 }
 
-// 3. Project links ----------------------------------------------------------
-// Any link to a project (side list, "projects" dropdown, the home page's list)
-// lands with that project's cover centred on screen. The cover's position is
-// measured without its fade-in offset (section 2).
+// 3. Project list -----------------------------------------------------------
+// Links to a project land with its cover centred through CSS (scroll-margin-top on
+// each section, style.css section 3). Here: highlight the project in view.
 
-const centreCover = (hash, behavior) => {
-  const cover = document.getElementById(hash.slice(1))?.querySelector('.cover');
-  if (!cover) return false;
-  const box = cover.getBoundingClientRect();
-  const fade = new DOMMatrixReadOnly(getComputedStyle(cover).transform).m42;
-  scrollTo({ top: scrollY + box.top - fade + box.height / 2 - innerHeight / 2, behavior });
-  return true;
-};
-
-// Links within this page glide there (smoothly, unless reduced motion is on: see
-// html's scroll-behavior).
-const page = (path) => path.replace(/(\/index)?\.html$/, '').replace(/\/$/, '');
-document.querySelectorAll('a[href*="#"]').forEach((a) => a.addEventListener('click', (e) => {
-  if (page(a.pathname) !== page(location.pathname) || !centreCover(a.hash)) return;
-  e.preventDefault();
-  history.pushState(null, '', a.hash);
-}));
-addEventListener('hashchange', () => centreCover(location.hash));   // a hash typed into the address bar
-
-// Arriving from another page: projects.html's <head> held the hash back so the
-// browser wouldn't jump to the project's top. Centre the cover, and keep it centred
-// while fonts and images load and shift the layout, until the visitor takes over.
-// The hash goes back in the address once the page has loaded (earlier, the browser
-// would still act on it).
-const landing = window.landingHash;
-if (landing) {
-  const land = () => {
-    if (!centreCover(landing, 'instant')) document.getElementById(landing.slice(1))?.scrollIntoView();
-  };
-  const follow = new ResizeObserver(land);
-  const stop = () => follow.disconnect();
-  ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, stop, { once: true, passive: true }));
-  addEventListener('load', () => setTimeout(() => {
-    stop();
-    history.replaceState(null, '', landing);
-  }, 1000));
-  document.fonts.ready.then(() => follow.observe(document.body));   // observing starts with one land()
-}
-
-// Highlight the project in view in the side list.
 const indexLinks = [...document.querySelectorAll('.project-index a')];
 if (indexLinks.length) {
   const tracker = new IntersectionObserver((entries) => {
