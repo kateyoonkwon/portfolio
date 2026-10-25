@@ -1,26 +1,59 @@
 /*
-  Layout model: every Canva page is a 1366px-wide artboard. Elements carry their
-  Canva geometry as unitless custom properties (--x, --y, --w, --h) and are
-  scaled to the viewport with --u (one Canva pixel). Below 760px the artboard is
-  dropped and elements flow in source order (see "Mobile" at the bottom).
+  Kate Kwon portfolio: one stylesheet for both pages.
+
+  Layout model: each page section is a 1366px-wide "artboard" (the Canva canvas).
+  Elements carry their Canva geometry inline as unitless custom properties
+  (--x --y --w --h) and are scaled to the window with --u (one Canva px).
+  At 760px and below the artboard is dropped and elements flow in source order
+  (section 13).
+
+  Contents
+   1. Tokens          8. Stitched titles
+   2. Base            9. Glow highlights
+   3. Artboard       10. Slide carousels
+   4. Navigation     11. Home page extras
+   5. Type           12. Motion
+   6. Images         13. Phones
+   7. Cards and case-study patterns
 */
 
+
+/* 1. Tokens ---------------------------------------------------------------- */
+
 :root {
-  --blue: #2974ba;
-  --ink: #252e34;
-  --card-fill: #edeced;
-  --line: max(1px, calc(100vw / 1366));  /* hairline borders: 1 Canva px */
-  --bg: #d6dfe1;          /* velvet's average tone, for solid panels (menu) */
+  --blue: #2974ba;                          /* display type, links */
   --link: var(--blue);
+  --ink: #252e34;                           /* body text, borders, arrows */
+  --stitch: #0970b8;                        /* cross-stitch squares (Name_web.svg's blue) */
+  --highlight: #e5ef4b;                     /* hovered links, selected text */
+  --bg: #d6dfe1;                            /* the velvet's average tone */
+  --panel: rgba(214, 223, 225, 0.94);       /* translucent velvet for the phone nav bar */
+  --muted: #7b878d;                         /* the projects page's side list */
+  --line: max(1px, calc(100vw / 1366));     /* hairline borders: 1 Canva px */
+  --radius: 36;                             /* card and frame corners, in Canva px */
   --font: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-head: "Schoolbook", "Century Schoolbook", Georgia, serif;
 }
+
+/* Headings: Century Schoolbook Bold where installed, otherwise C059 Bold, a free
+   metric-compatible clone served with the site (AGPL with font exception). */
+@font-face {
+  font-family: "Schoolbook";
+  font-weight: 700;
+  font-display: swap;
+  src: local("Century Schoolbook Bold"), local("CenturySchoolbook-Bold"),
+       url("../assets/fonts/C059-Bold.woff2") format("woff2");
+}
+
+
+/* 2. Base ------------------------------------------------------------------ */
 
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
-/* Velvet background (assets/velvet.webp): the photo plus its mirror image, so it
-   repeats down the page without a seam. It scrolls with the page. */
+/* Velvet background (assets/velvet.webp): the photo stacked with its mirror image,
+   so it repeats down the page without a seam. It scrolls with the page. */
 body {
   margin: 0;
   background: var(--bg) url("../assets/velvet.webp") top center / 100% auto repeat-y;
@@ -30,13 +63,13 @@ body {
 }
 
 a { color: var(--link); text-decoration: none; }
-
-/* Highlighter yellow behind hovered links and selected text. */
-a:hover { background: #e5ef4b; }
-::selection { background: #e5ef4b; color: var(--ink); }
-
+a:hover { background: var(--highlight); }
+::selection { background: var(--highlight); color: var(--ink); }
 :focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
 
+.accent { color: var(--link); }
+
+/* Shown only when reached by keyboard. */
 .skip-link {
   position: absolute;
   left: 16px;
@@ -49,8 +82,54 @@ a:hover { background: #e5ef4b; }
 }
 .skip-link:focus { top: 12px; outline: none; }
 
-/* ---------- Navigation ---------- */
+/* Text for screen readers only (e.g. the words behind a stitched title). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
+
+/* 3. Artboard -------------------------------------------------------------- */
+
+.page { container-type: inline-size; }
+
+.board {
+  --u: calc(100cqw / 1366);
+  position: relative;
+  width: 100%;
+  height: calc(var(--h) * var(--u));
+  overflow: hidden;
+}
+
+/* Space above each project (0.83 x the 26.667px body size: what the title's default
+   heading margin used to add). */
+.project .board { margin-top: calc(0.83 * 26.667 * var(--u)); }
+
+/* Glows may spill above and below their section; sideways overflow stays clipped. */
+@supports (overflow: clip) {
+  .board { overflow-x: clip; overflow-y: visible; }
+}
+
+/* Every placed element. Only elements that set their own --h get a fixed height
+   (--h also inherits from the .board, so the rule must check the element's style);
+   the rest, mostly text, size to their content. */
+.el {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  margin: 0;
+}
+.el[style*="--h:"] { height: calc(var(--h) * var(--u)); }
+
+
+/* 4. Navigation ------------------------------------------------------------ */
+
+/* Top-right nav on both pages: "home" and the "projects" dropdown. */
 .site-nav {
   position: fixed;
   inset: 0 0 auto 0;
@@ -73,28 +152,25 @@ a:hover { background: #e5ef4b; }
 .site-nav a,
 .menu-btn {
   font: inherit;
+  font-family: var(--font-head);
+  font-weight: 700;
   font-size: max(11px, calc(15 * var(--u)));
   color: var(--link);
   white-space: nowrap;
 }
 
-.menu-btn {
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-}
-
+.menu-btn { padding: 0; border: 0; background: none; cursor: pointer; }
 .menu-btn::after { content: " ▾"; font-size: 0.8em; }
+.nav-toggle { display: none; }                 /* phones only */
 
-/* Current page (and "projects" while on a project page) is underlined. */
+/* The current page ("projects" on the projects page) is underlined. */
 .site-nav [aria-current] {
   text-decoration: underline;
   text-decoration-thickness: max(1px, calc(1.5 * var(--u)));
   text-underline-offset: 0.3em;
 }
 
-/* "projects" dropdown */
+/* "projects" dropdown: opens on hover, keyboard focus, or click (.open, set in JS). */
 .has-menu { position: relative; }
 
 .site-nav .submenu {
@@ -102,21 +178,20 @@ a:hover { background: #e5ef4b; }
   top: 100%;
   right: 0;
   min-width: max-content;
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(calc(-6 * var(--u)));
-  transition: opacity 140ms ease-out, transform 140ms ease-out, visibility 0s 140ms;
   margin-top: calc(8 * var(--u));
   padding: calc(10 * var(--u)) calc(16 * var(--u));
   background: var(--bg);
   border: var(--line) solid var(--ink);
   border-radius: calc(16 * var(--u));
   text-align: right;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(calc(-6 * var(--u)));
+  transition: opacity 140ms ease-out, transform 140ms ease-out, visibility 0s 140ms;
 }
 
 /* Invisible bridge so the menu stays open while the pointer moves down to it. */
 .submenu::before { content: ""; position: absolute; inset: calc(-10 * var(--u)) 0 100% 0; }
-
 .submenu a { display: block; line-height: 1.9; }
 
 .has-menu:hover .submenu,
@@ -128,16 +203,7 @@ a:hover { background: #e5ef4b; }
   transition-delay: 0s;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .site-nav .submenu, .project-index a { transition: none; }
-  html.reveal .el { opacity: 1; transform: none; transition: none; }
-}
-
-.nav-toggle { display: none; }
-
-/* Light-gray list of projects fixed on the right of the projects page;
-   the project in view is blue. */
+/* Projects page: list of projects fixed on the right; the one in view is blue (JS). */
 .project-index {
   --u: calc(100vw / 1366);
   position: fixed;
@@ -162,70 +228,16 @@ a:hover { background: #e5ef4b; }
   display: block;
   font-size: max(11px, calc(13 * var(--u)));
   line-height: 1.25;
-  color: #7b878d;
+  color: var(--muted);
   transition: color 200ms ease-out;
 }
-
 .project-index a:hover { color: var(--ink); text-decoration: none; }
 .project-index a[aria-current] { color: var(--link); }
 
-/* Stitched project titles: cross-stitch cursive squares, built by tools/build_titles.py.
-   .cover-group wraps a project's cover(s) and title; it only affects the phone layout. */
-.cover-group { display: contents; }
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
 
-.stitch-line {
-  height: calc(var(--h) * var(--u));
-  overflow: visible;
-  fill: rgb(9, 112, 184);
-}
-.stitch-narrow { display: none; }
+/* 5. Type ------------------------------------------------------------------ */
 
-.reveal .el.stitch-line { opacity: 1; transform: none; }
-/* Project names in the home page list keep the body text style. */
-.quiet-link { color: inherit; }
-
-/* Elements fade up as they scroll into view (class set in <head> so nothing flashes). */
-.reveal .el {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 600ms ease-out, transform 600ms ease-out;
-}
-
-.reveal .el.in { opacity: 1; transform: none; }
-
-/* ---------- Artboard ---------- */
-
-.page {
-  container-type: inline-size;
-  scroll-margin-top: 0;
-}
-
-.board {
-  --u: calc(100cqw / 1366);
-  position: relative;
-  width: 100%;
-  height: calc(var(--h) * var(--u));
-  overflow: hidden;
-}
-
-.el {
-  position: absolute;
-  left: calc(var(--x) * var(--u));
-  top: calc(var(--y) * var(--u));
-  width: calc(var(--w) * var(--u));
-  margin: 0;
-}
-
-/* ---------- Text ---------- */
-
+/* Body text keeps the line breaks written in the HTML. */
 .t {
   font-size: calc(26.667 * var(--u));
   line-height: 1.18;
@@ -233,113 +245,129 @@ a:hover { background: #e5ef4b; }
   overflow-wrap: break-word;
 }
 
-.t em, .card em { font-style: italic; }
-
+/* "about me :)" */
 .display {
+  font-family: var(--font-head);
+  font-weight: 700;
   font-size: calc(106.666 * var(--u));
   line-height: 0.83;
   letter-spacing: 0.045em;
   color: var(--blue);
-  font-weight: normal;
 }
 
-.title {
-  font-size: calc(26.667 * var(--u));
-  line-height: 1.11;
-  color: var(--blue);
-  text-align: center;
-  font-weight: normal;
-}
-
-/* Headings: box titles ("background:", "my impact:", "what i can do:" …) and the
-   project titles under each cover. Century Schoolbook Bold where installed,
-   otherwise C059 Bold, a free metric-compatible clone served with the site. */
-@font-face {
-  font-family: "Schoolbook";
+/* Box and list headings: "background:", "my impact:", "what i can do:" … */
+.box-title {
+  font-family: var(--font-head);
   font-weight: 700;
-  font-display: swap;
-  src: local("Century Schoolbook Bold"), local("CenturySchoolbook-Bold"),
-       url("../assets/fonts/C059-Bold.woff2") format("woff2");
+  font-size: 1.05em;
 }
 
-.box-title,
-.title,
-.display,
-.site-nav a,
-.menu-btn {
-  font-family: "Schoolbook", "Century Schoolbook", Georgia, serif;
-  font-weight: 700;
-}
+/* "omw!" under the portrait. */
+.caption { color: var(--link); font-style: italic; text-align: center; }
 
-.box-title { font-size: 1.05em; }
+/* Project names in the home list link to their projects but keep the text style. */
+.quiet-link { color: inherit; }
 
-/* Projects page type, sized like Somi's case studies (px at a 1366-wide window):
-   16 card text, 20 card labels / sublines / stat lines, 30 headings, 50 statements. */
-.project .t, .project .card { font-size: calc(16 * var(--u)); line-height: 1.25; }
+/* Projects page sizes, after Somi's case studies (px at a 1366-wide window):
+   16 card text, 20 labels / lead-ins / sublines, 30 headings, 50 statements. */
+.project .t,
+.project .card { font-size: calc(16 * var(--u)); line-height: 1.25; }
 .project .box-title { font-size: 1.25em; }
-.project .card p { margin: 0; }
 
-/* Case-study patterns (after somi.framer.website):
-   - .trio: three cards in a row, label centred over left-aligned text
-   - .arrow: thin downward arrow from a problem to its insight
-   - .kicker: small centred label above a statement; .pull: very large centred statement
-   - .pull-note: centred lead-in line; .lede + .subline: left-aligned heading and its subline
-   - .stat-line: the key line inside a card, a step larger than its text */
-.trio .box-title { display: block; text-align: center; }
+.project .kicker,
+.project .pull-note,
+.project .subline { font-size: calc(20 * var(--u)); font-weight: 300; white-space: normal; }
+.kicker, .pull-note { text-align: center; }                 /* small label / lead-in line */
 
-.arrow {
-  height: calc(var(--h) * var(--u));
-  color: var(--ink);
-  overflow: visible;
-}
+.project .lede { font-size: calc(30 * var(--u)); line-height: 1.2; white-space: normal; }
 
-.project .kicker, .project .pull-note, .project .subline {
-  font-size: calc(20 * var(--u));
-  font-weight: 300;
-  white-space: normal;
-}
-.kicker, .pull-note { text-align: center; }
-
-.project .pull {
+.project .pull {                                             /* very large statement */
   font-size: calc(50 * var(--u));
   line-height: 1.2;
   text-align: center;
   white-space: normal;
 }
 
-.project .lede { font-size: calc(30 * var(--u)); line-height: 1.2; white-space: normal; }
+.stat-line { font-size: 1.25em; line-height: 1.2; }          /* the key line in a card */
 
-.stat-line { font-size: 1.25em; line-height: 1.2; }
 
-/* A text card beside tall images keeps its text at the bottom, as on Somi's Instagram card. */
+/* 6. Images ---------------------------------------------------------------- */
+
+/* Frame = Canva rect; the <img> inside reproduces Canva's crop (--ix --iy --iw --ih).
+   The stripes show only if an image fails to load (JS then hides the broken image). */
+.img {
+  overflow: hidden;
+  background: repeating-linear-gradient(45deg, #f2f2f2 0 10px, #e6e6e6 10px 20px);
+}
+
+.img img {
+  position: absolute;
+  display: block;
+  max-width: none;
+  left: calc(var(--ix, 0) / var(--w) * 100%);
+  top: calc(var(--iy, 0) / var(--h) * 100%);
+  width: calc(var(--iw, var(--w)) / var(--w) * 100%);
+  height: calc(var(--ih, var(--h)) / var(--h) * 100%);
+}
+
+.img.hero-bg,                    /* the signature on the home page */
+.img.svg { background: none; }   /* Canva SVG exports: own crop, corners and stroke */
+
+/* Project images (not covers) sit in rounded frames with a hairline ink rim.
+   matmerize's SVG exports have rounded corners but no stroke, so they get the rim
+   with their own corner shape (27 of 219 x 341 in the SVG). */
+.project .img:not(.cover):not(.svg) { border-radius: calc(var(--radius) * var(--u)); }
+
+.project .img:not(.cover):not(.svg)::after,
+#matmerize .img.svg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: var(--line) solid var(--ink);
+  border-radius: inherit;
+  pointer-events: none;
+}
+#matmerize .img.svg::after { border-radius: 12.3% / 7.9%; }
+
+/* Video in an image frame (minturn's website recording): it takes the height of
+   the card beside it and is cropped from the right. */
+.img video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+}
+
+
+/* 7. Cards and case-study patterns ----------------------------------------- */
+
+/* .card: outlined text box; .box: the "background" / "role" boxes. */
+.card,
+.box {
+  padding: calc(32 * var(--u));
+  border: var(--line) solid var(--ink);
+  border-radius: calc(var(--radius) * var(--u));
+}
+
+.card {
+  font-size: calc(26.667 * var(--u));
+  line-height: 1;
+  white-space: pre-line;
+}
+.card p { margin: 0; }
+
+/* Patterns after somi.framer.website:
+   .trio   three cards in a row, label centred over left-aligned text
+   .beside a text card next to tall images, text at the bottom
+   .arrow  thin down arrow (.labeled: with a label set into its stem) */
+.trio .box-title { display: block; text-align: center; }
 .card.beside { display: flex; align-items: flex-end; }
 
-/* Glow highlights: the soft-light photo (assets/glow.webp) faded out radially behind
-   key moments. Each .glow sits right before the element it highlights. */
-.glow {
-  height: calc(var(--h) * var(--u));
-  z-index: -1;
-  pointer-events: none;
-  /* --fx/--fy pick which part of the photo shows (its colours vary top to bottom);
-     --zoom enlarges it so one colour fills the glow. */
-  background: url("../assets/glow.webp") var(--fx, 50%) var(--fy, 30%) / calc(var(--zoom, 1) * 100%) auto no-repeat;
-  /* A soft, squarish fade: two long linear fades (across and down) multiplied
-     together, then blurred, so there is no visible edge or oval. */
-  --fade: transparent, rgba(0, 0, 0, 0.35) 18%, #000 42%, #000 58%, rgba(0, 0, 0, 0.35) 82%, transparent;
-  -webkit-mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
-  mask-composite: intersect;
-  filter: blur(calc(28 * var(--u)));
-}
+.arrow { color: var(--ink); overflow: visible; }
 
-/* Arrow with a label set into its stem ("the execution"). */
-.arrow.labeled {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: calc(var(--h) * var(--u));
-}
+.arrow.labeled { display: flex; flex-direction: column; align-items: center; }
 .arrow.labeled .stem { flex: 1; width: calc(19 * var(--u)); overflow: visible; }
 .arrow.labeled .label {
   padding: calc(10 * var(--u)) 0;
@@ -347,15 +375,53 @@ a:hover { background: #e5ef4b; }
   font-weight: 300;
   white-space: nowrap;
 }
-.arrow.labeled svg { width: calc(19 * var(--u)); height: calc(50 * var(--u)); overflow: visible; }
+.arrow.labeled svg:last-child { width: calc(19 * var(--u)); height: calc(50 * var(--u)); overflow: visible; }
 
-/* Slide carousels: a strip of small slides with one shown large in the middle.
-   The strip slides so the active slide stays centred (--i, set by JS). */
+
+/* 8. Stitched titles ------------------------------------------------------- */
+
+/* Cross-stitch cursive titles (built by tools/build_titles.py): one SVG per line,
+   placed on the artboard over the cover's corners. .cover-group wraps a cover and
+   its title; it only does anything on phones (section 13). */
+.cover-group { display: contents; }
+.title.stitch { margin: 0; }
+.stitch-line { overflow: visible; fill: var(--stitch); }
+
+
+/* 9. Glow highlights ------------------------------------------------------- */
+
+/* The soft-light photo (assets/glow.webp) faded in behind key moments. Each .glow
+   sits right before the element it highlights. --fx/--fy choose which part of the
+   photo shows (its colours change top to bottom); --zoom enlarges it so one colour
+   fills the glow. Two long linear fades (across and down) are multiplied and then
+   blurred, so the glow has no visible edge. */
+.glow {
+  z-index: -1;
+  pointer-events: none;
+  --fade: transparent, rgba(0, 0, 0, 0.35) 18%, #000 42%, #000 58%, rgba(0, 0, 0, 0.35) 82%, transparent;
+}
+
+.glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/glow.webp") var(--fx, 50%) var(--fy, 30%) / calc(var(--zoom, 1) * 100%) auto no-repeat;
+  -webkit-mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
+  mask-composite: intersect;
+  filter: blur(calc(28 * var(--u)));
+}
+
+
+/* 10. Slide carousels ------------------------------------------------------ */
+
+/* A strip of small slides with one shown large in the middle. The strip slides so
+   the active slide (--i, set in JS) stays centred; its edges fade out. */
 .carousel {
   --big: calc(600 * var(--u));
   --small: calc(150 * var(--u));
   --gap: calc(14 * var(--u));
-  height: calc(var(--h) * var(--u));
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
@@ -374,7 +440,6 @@ a:hover { background: #e5ef4b; }
 }
 
 .carousel .slide {
-  position: relative;
   flex: none;
   width: var(--small);
   aspect-ratio: 16 / 9;
@@ -387,13 +452,12 @@ a:hover { background: #e5ef4b; }
   transition: width 600ms cubic-bezier(.2, .7, .2, 1);
 }
 .carousel .slide[aria-current="true"] { width: var(--big); cursor: default; }
-.carousel .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.carousel .slide img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
+/* Arrows and "01 / 08" counter under the strip. */
 .carousel .controls {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: auto 0 0 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -408,133 +472,82 @@ a:hover { background: #e5ef4b; }
   color: var(--ink);
   cursor: pointer;
 }
-.carousel .controls svg { display: block; width: calc(60 * var(--u)); height: calc(12 * var(--u)); overflow: visible; }
-.carousel .controls button:hover { background: #e5ef4b; }
+.carousel .controls button:hover { background: var(--highlight); }
 
-@media (prefers-reduced-motion: reduce) {
-  .carousel .track, .carousel .slide { transition: none; }
-}
+/* Thin horizontal arrows: carousel controls and the home page's "projects" link. */
+.carousel .controls svg,
+.next-page svg { display: block; width: calc(60 * var(--u)); height: calc(12 * var(--u)); overflow: visible; }
 
-/* Let the larger glows spill above and below their section instead of being cut
-   off at its edge (sideways overflow stays clipped, so no horizontal scrolling). */
-@supports (overflow: clip) {
-  .board { overflow-x: clip; overflow-y: visible; }
-}
 
-/* Home: the cross-stitch flower in the bottom-left corner (squares match the titles'). */
-.stamp { height: calc(var(--h) * var(--u)); }
+/* 11. Home page extras ----------------------------------------------------- */
+
+/* The cross-stitch flower, bottom-left (assets/flower.svg, from tools/build_stamp.py). */
 .stamp img { display: block; width: 100%; height: 100%; }
 
-/* Home: link to the projects page in the bottom-right corner. */
-.next-page {
-  display: flex;
+/* "projects →" link, bottom-right. */
+.next-page { display: flex; justify-content: flex-end; font-size: calc(26.667 * var(--u)); }
+.next-page a {
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
   gap: calc(14 * var(--u));
-  font-size: calc(26.667 * var(--u));
+  padding: 0 calc(4 * var(--u));
   color: var(--ink);
 }
-.next-page a { color: var(--ink); display: inline-flex; align-items: center; gap: calc(14 * var(--u)); padding: 0 calc(4 * var(--u)); }
-.next-page svg { width: calc(60 * var(--u)); height: calc(12 * var(--u)); overflow: visible; }
 
-/* Indented list inside a card. */
-.indent { display: block; padding-left: 1.2em; }
 
-/* Video in an image frame (minturn website screen recording). */
-.img video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: left center;  /* when cropped to match the card beside it, crop from the right */
+/* 12. Motion --------------------------------------------------------------- */
+
+/* Elements fade up as they scroll into view. html.reveal is set in each page's
+   <head> (so nothing flashes before JS runs); JS adds .in to each element. */
+.reveal .el {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms ease-out, transform 600ms ease-out;
 }
+.reveal .el.in,
+.reveal .el.stitch-line { opacity: 1; transform: none; }   /* titles don't fade */
 
-/* "background" and "role" boxes, outlined like the cards below them. */
-.box {
-  height: calc(var(--h) * var(--u));
-  padding: calc(32 * var(--u));
-  border: var(--line) solid var(--ink);
-  border-radius: calc(36 * var(--u));
-}
-
-.caption {
-  color: var(--link);
-  font-style: italic;
-  text-align: center;
-}
-
-/* ---------- Images ---------- */
-
-/* Frame = Canva rect; the <img> inside reproduces Canva's imageBox crop. */
-.img {
-  height: calc(var(--h) * var(--u));
-  overflow: hidden;
-  background: repeating-linear-gradient(45deg, #f2f2f2 0 10px, #e6e6e6 10px 20px);
-}
-
-.img img {
-  position: absolute;
-  display: block;
-  max-width: none;
-  left: calc(var(--ix, 0) / var(--w) * 100%);
-  top: calc(var(--iy, 0) / var(--h) * 100%);
-  width: calc(var(--iw, var(--w)) / var(--w) * 100%);
-  height: calc(var(--ih, var(--h)) / var(--h) * 100%);
-}
-
-.img.hero-bg { background: none; }
-
-/* Project-page images sit in rounded frames (36px, as in the Canva SVG exports)
-   with the same hairline ink border as the other outlines. Cover images stay square. */
-.project .img:not(.cover):not(.svg) { border-radius: calc(36 * var(--u)); }
-.project .img:not(.cover):not(.svg)::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: var(--line) solid var(--ink);
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-/* SVG exports from Canva already include their own crop, corners and stroke. */
-.img.svg { background: none; border-radius: 0 !important; }
-
-/* matmerize's SVG exports have no stroke of their own, so draw the ink rim here. */
-#matmerize .img.svg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: var(--line) solid var(--ink);
-  border-radius: 12.3% / 7.9%;  /* the SVGs' own corner: 27 of 219 x 341 */
-  pointer-events: none;
-}
-
-/* Rounded outline drawn around a group of images. */
-.outline {
-  height: calc(var(--h) * var(--u));
-  border: var(--line) solid var(--ink);
-  border-radius: calc(var(--r, 36) * var(--u));
-  pointer-events: none;
-}
-
-/* ---------- Cards ---------- */
-
-.card {
-  height: calc(var(--h) * var(--u));
-  padding: calc(32 * var(--u));
-  border: var(--line) solid var(--ink);
-  border-radius: calc(36 * var(--u));
-  font-size: calc(26.667 * var(--u));
-  line-height: 1;
-  white-space: pre-line;
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.reveal .el { opacity: 1; transform: none; transition: none; }
+  .site-nav .submenu,
+  .project-index a,
+  .carousel .track,
+  .carousel .slide { transition: none; }
 }
 
 
-/* ---------- Mobile ---------- */
+/* 13. Phones (760px and below) --------------------------------------------- */
 
 @media (max-width: 760px) {
-  .site-nav { position: sticky; top: 0; background: rgba(214, 223, 225, 0.94); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); container-type: normal; }
+
+  /* Artboard off: elements stack in source order at their natural size. */
+  .board {
+    --u: 1px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 16px 56px;
+    overflow: visible;
+  }
+  .project .board { margin-top: 0; }
+  .el { position: relative; left: auto; top: auto; width: 100%; }
+  .el[style*="--h:"] { height: auto; }
+
+  /* Rows of small images become a two-column grid; alpha kappa psi's covers keep one row. */
+  .m-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  #alpha-kappa-psi .m-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+
+  /* Nav: a sticky bar with a "menu" button; the project list shows inside the menu. */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    container-type: normal;
+  }
   .nav-toggle {
     display: block;
     margin-left: auto;
@@ -546,75 +559,10 @@ a:hover { background: #e5ef4b; }
     font-size: 15px;
     pointer-events: auto;
   }
-  #nav-list {
-    display: none;
-    flex-direction: column;
-    gap: 0;
-    padding: 0 16px 12px;
-    text-align: right;
-  }
+  #nav-list { display: none; flex-direction: column; gap: 0; padding: 0 16px 12px; text-align: right; }
   .site-nav.open #nav-list { display: flex; }
   .site-nav a, .menu-btn { font-size: 16px; line-height: 2.2; }
   .menu-btn::after { content: ""; }
-  /* Inside the mobile menu the project list is always shown, indented under "projects". */
-  .project-index { display: none; }
-
-  /* Glows: a zero-height marker in the flow whose ::before spreads the glow over the
-     content after it (desktop sizes them on the artboard instead). */
-  .el.glow {
-    display: block;
-    height: 0;
-    margin-bottom: -20px;
-    background: none;
-    -webkit-mask-image: none;
-    mask-image: none;
-    filter: none;
-  }
-  .el.glow::before {
-    content: "";
-    position: absolute;
-    left: -16px;
-    right: -16px;
-    top: -40px;
-    height: calc(var(--h) * 0.42px);
-    background: url("../assets/glow.webp") var(--fx, 50%) var(--fy, 30%) / calc(var(--zoom, 1) * 100%) auto no-repeat;
-    -webkit-mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
-    -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(90deg, var(--fade)), linear-gradient(180deg, var(--fade));
-    mask-composite: intersect;
-    filter: blur(14px);
-  }
-  .next-page { font-size: 17px; }
-  .el.stamp { width: 95px; height: auto; aspect-ratio: 19 / 24; }
-  .next-page svg { width: 44px; }
-  /* Phones: titles keep the desktop layout, with smaller squares (--sq): the first
-     line half over the cover's top-left corner, a second line over its bottom-right. */
-  .cover-group {
-    --sq: min(2.4px, calc((100vw - 32px) / 150));
-    display: block;
-    position: relative;
-    padding-top: calc(16 * var(--sq) * 0.6);
-  }
-  .cover-group:has(.stitch-wide:nth-of-type(2)) { padding-bottom: calc(16 * var(--sq) * 0.6); }
-  .title.stitch { margin: 0; }
-  .stitch-narrow { display: none; }
-  .cover-group .el.stitch-wide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: calc(var(--w) / 7 * var(--sq));
-    height: auto;
-  }
-  .cover-group .el.stitch-wide:nth-of-type(2) { top: auto; left: auto; right: 0; bottom: 0; }
-
-  /* About: the portrait takes half the width, on the right, with its caption under it. */
-  .page:not(.page-hero) .el.img.m-center, .page:not(.page-hero) .el.caption { width: 50%; align-self: flex-end; }
-
-  /* alpha kappa psi: the three covers stay in one row, as on desktop. */
-  #alpha-kappa-psi .m-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  section.project { scroll-margin-top: 48px; }
-
   .site-nav .submenu {
     position: static;
     visibility: visible;
@@ -625,51 +573,63 @@ a:hover { background: #e5ef4b; }
     border: 0;
   }
   .submenu a { line-height: 2; font-size: 15px; }
+  .project-index { display: none; }
+  section.project { scroll-margin-top: 48px; }   /* land below the sticky bar */
 
-  .board {
-    --u: 1px;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 24px 16px 56px;
-    overflow: visible;
-  }
-
-  .el { position: relative; left: auto; top: auto; width: 100%; }
-
-  .t, .card, .title { font-size: 17px; }
+  /* Type */
+  .t, .card { font-size: 17px; }
+  .display { font-size: 52px; }
   .project .t, .project .card { font-size: 15px; }
   .project .kicker, .project .pull-note, .project .subline { font-size: 17px; }
   .project .lede { font-size: 22px; }
   .project .pull { font-size: 26px; }
+  .next-page { font-size: 17px; }
+
+  /* Images, cards, arrows, carousels */
+  .img { aspect-ratio: var(--w) / var(--h); }
+  .card, .box { padding: 22px; border-radius: 24px; }
+  .card { line-height: 1.15; }
   .el.arrow { width: 19px; height: 64px; align-self: center; }
   .el.arrow.labeled { width: auto; height: 130px; }
   .arrow.labeled .label { font-size: 17px; }
-  .arrow.labeled svg { width: 19px; height: 40px; }
+  .arrow.labeled svg:last-child { width: 19px; height: 40px; }
   .el.carousel { --big: 78vw; --small: 20vw; --gap: 8px; height: calc(78vw * 9 / 16 + 56px); }
   .carousel .controls { font-size: 15px; }
-  .carousel .controls svg { width: 44px; height: 12px; }
-  .display { font-size: 52px; }
+  .carousel .controls svg, .next-page svg { width: 44px; height: 12px; }
 
-  .img, .outline { height: auto; aspect-ratio: var(--w) / var(--h); }
-  .project .img::after, .outline, .card, .box { border-width: 1px; }
-
-  .card, .box { height: auto; padding: 22px; border-radius: 24px; }
-  .card { line-height: 1.15; }
-
-  .outline { display: none; }
-
-  /* Rows of small images become a two-column grid. */
-  .m-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .m-grid > .el { width: 100%; }
-
-  .m-center { align-self: center; width: min(100%, 320px); }
-
-  /* Home hero: signature stays full width, photo grid below it. */
+  /* Home: signature full width with the photo grid below; portrait half width on
+     the right with "omw!" under it; the flower smaller. */
   .page-hero .board { padding: 0 0 24px; gap: 0; }
-  /* Crop the frame to the signature band (~215 Canva px tall) and keep the SVG's own aspect. */
-  .page-hero .hero-bg { aspect-ratio: 1367.5 / 215; }
+  .page-hero .hero-bg { aspect-ratio: 1367.5 / 215; }            /* just the signature band */
   .page-hero .hero-bg img { height: auto; top: calc(-20.8 / 215 * 100%); }
   .page-hero .m-grid { padding: 0 16px; }
+  .el.portrait { width: 50%; align-self: flex-end; }
+  .el.stamp { width: 95px; aspect-ratio: 19 / 24; }
+
+  /* Titles keep the desktop layout with smaller squares (--sq): the first line half
+     over the cover's top-left corner, a second line over its bottom-right. */
+  .cover-group {
+    --sq: min(2.4px, calc((100vw - 32px) / 150));
+    position: relative;
+    display: block;
+    padding-top: calc(16 * var(--sq) * 0.6);
+  }
+  .cover-group:has(.stitch-line:nth-of-type(2)) { padding-bottom: calc(16 * var(--sq) * 0.6); }
+  .cover-group .el.stitch-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: calc(var(--w) / 7 * var(--sq));
+  }
+  .cover-group .el.stitch-line:nth-of-type(2) { top: auto; left: auto; right: 0; bottom: 0; }
+
+  /* Glows: a zero-height marker in the flow; its ::before spreads the glow over
+     the content that follows. */
+  .el.glow { height: 0; margin-bottom: -20px; }
+  .glow::before {
+    inset: -40px -16px auto;
+    height: calc(var(--h) * 0.42px);
+    filter: blur(14px);
+  }
 }

@@ -1,39 +1,48 @@
-// Mobile menu, the "projects" dropdown, and hiding images that fail to load
-// (their frame then shows a placeholder).
+// Kate Kwon portfolio: behaviour for both pages.
+//
+//  1. Navigation        phone menu button and the "projects" dropdown
+//  2. Scroll reveal     elements fade up as they come into view
+//  3. Project list      projects page: highlight the project in view
+//  4. Carousels         slide strips with one slide shown large
+//  5. Media fallbacks   reduced motion and images that fail to load
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// 1. Navigation -------------------------------------------------------------
 
 const nav = document.querySelector('.site-nav');
 const toggle = nav.querySelector('.nav-toggle');
 const menu = nav.querySelector('.has-menu');
 const menuBtn = menu.querySelector('.menu-btn');
 
-toggle.addEventListener('click', () => {
-  const open = nav.classList.toggle('open');
-  toggle.setAttribute('aria-expanded', String(open));
-});
-
 const setMenu = (open) => {
   menu.classList.toggle('open', open);
   menuBtn.setAttribute('aria-expanded', String(open));
 };
+const setPhoneMenu = (open) => {
+  nav.classList.toggle('open', open);
+  toggle.setAttribute('aria-expanded', String(open));
+};
 
+toggle.addEventListener('click', () => setPhoneMenu(!nav.classList.contains('open')));
 menuBtn.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
 
-document.addEventListener('click', (e) => {
-  if (!menu.contains(e.target)) setMenu(false);
-});
-
+// Close the dropdown on an outside click or Escape.
+document.addEventListener('click', (e) => { if (!menu.contains(e.target)) setMenu(false); });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { setMenu(false); menuBtn.blur(); }
 });
 
-// Close the mobile menu after jumping to a project on the same page.
+// Close both menus after jumping to a project.
 nav.querySelectorAll('.submenu a').forEach((a) => a.addEventListener('click', () => {
-  nav.classList.remove('open');
-  toggle.setAttribute('aria-expanded', 'false');
+  setPhoneMenu(false);
   setMenu(false);
 }));
 
-// Fade elements in as they scroll into view; ones entering together are staggered.
+// 2. Scroll reveal ----------------------------------------------------------
+// The page's <head> adds html.reveal; CSS hides .el until it gets .in. Elements
+// entering together are staggered.
+
 const els = document.querySelectorAll('.el');
 if ('IntersectionObserver' in window) {
   const revealer = new IntersectionObserver((entries) => {
@@ -48,12 +57,12 @@ if ('IntersectionObserver' in window) {
   els.forEach((el) => el.classList.add('in'));
 }
 
-// Projects page: highlight the project in view in the right-hand list.
+// 3. Project list -----------------------------------------------------------
+
 const indexLinks = [...document.querySelectorAll('.project-index a')];
 if (indexLinks.length) {
   const tracker = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (!e.isIntersecting) return;
+    entries.filter((e) => e.isIntersecting).forEach((e) => {
       indexLinks.forEach((a) => {
         if (a.hash === `#${e.target.id}`) a.setAttribute('aria-current', 'true');
         else a.removeAttribute('aria-current');
@@ -63,13 +72,15 @@ if (indexLinks.length) {
   document.querySelectorAll('section.project').forEach((s) => tracker.observe(s));
 }
 
-// Slide carousels: one slide large, the rest small. Arrows, clicks and arrow keys move
-// between slides; it also advances on its own until the visitor takes over.
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// 4. Carousels --------------------------------------------------------------
+// Arrows, clicking a slide, or the arrow keys move between slides. A carousel
+// advances on its own (while visible and not hovered) until the visitor uses it.
+
+const pad = (n) => String(n).padStart(2, '0');
+
 document.querySelectorAll('.carousel').forEach((car) => {
   const slides = [...car.querySelectorAll('.slide')];
   const count = car.querySelector('.count');
-  const pad = (n) => String(n).padStart(2, '0');
   let i = 0;
   let auto = !reduceMotion;
   let hovering = false;
@@ -81,14 +92,14 @@ document.querySelectorAll('.carousel').forEach((car) => {
     slides.forEach((s, k) => (k === i ? s.setAttribute('aria-current', 'true') : s.removeAttribute('aria-current')));
     count.textContent = `${pad(i + 1)} / ${pad(slides.length)}`;
   };
-  const takeOver = () => { auto = false; };
+  const go = (n) => { auto = false; show(n); };
 
-  car.querySelector('.prev').addEventListener('click', () => { takeOver(); show(i - 1); });
-  car.querySelector('.next').addEventListener('click', () => { takeOver(); show(i + 1); });
-  slides.forEach((s, k) => s.addEventListener('click', () => { takeOver(); show(k); }));
+  car.querySelector('.prev').addEventListener('click', () => go(i - 1));
+  car.querySelector('.next').addEventListener('click', () => go(i + 1));
+  slides.forEach((s, k) => s.addEventListener('click', () => go(k)));
   car.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') { takeOver(); show(i + 1); }
-    if (e.key === 'ArrowLeft') { takeOver(); show(i - 1); }
+    if (e.key === 'ArrowRight') go(i + 1);
+    if (e.key === 'ArrowLeft') go(i - 1);
   });
   car.addEventListener('pointerenter', () => { hovering = true; });
   car.addEventListener('pointerleave', () => { hovering = false; });
@@ -96,11 +107,14 @@ document.querySelectorAll('.carousel').forEach((car) => {
   setInterval(() => { if (auto && visible && !hovering && !document.hidden) show(i + 1); }, 3500);
 });
 
+// 5. Media fallbacks --------------------------------------------------------
+
 // Looping videos stay paused on their poster for visitors who prefer reduced motion.
-if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (reduceMotion) {
   document.querySelectorAll('video[autoplay]').forEach((v) => { v.removeAttribute('autoplay'); v.pause(); });
 }
 
+// A missing image is hidden so its frame shows the striped placeholder instead.
 document.querySelectorAll('.img img').forEach((img) => {
   const hide = () => { img.style.visibility = 'hidden'; };
   if (img.complete && img.naturalWidth === 0) hide();

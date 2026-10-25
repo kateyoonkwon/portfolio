@@ -1,3 +1,6 @@
+> Snapshot of the original Canva design, taken before the rebuild (Phase 1).
+> The site has since been redesigned; see README.md for how it works now.
+
 # Phase 1 — Design inventory (Canva design `DAHYFWWaYeo`, "Kate Kwon")
 
 Source: Canva connector, exact element data (positions in Canva px on a 1366px-wide canvas).

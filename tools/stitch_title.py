@@ -11,7 +11,8 @@ joins run along the bottom, so letter shapes stay open). Short gaps only, and
 only between letters that join that way in handwriting (see JOIN_INTO/JOIN_FROM).
 
 Usage: python3 tools/stitch_title.py "text"
-Prints JSON: {"w": cols, "h": rows, "cells": [[col, row], ...]}
+Prints JSON: {"w": cols, "h": rows, "baseline": row of the baseline, "cells": [[col, row], ...]}
+Used by tools/build_titles.py.
 """
 import json
 import sys

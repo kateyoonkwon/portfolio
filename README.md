@@ -1,89 +1,88 @@
 # Kate Kwon — portfolio
 
-Static rebuild of the Canva site (`katekwon.my.canva.site`, design `DAHYFWWaYeo`). Plain HTML/CSS/JS, no build step.
+Personal portfolio, rebuilt in code from the original Canva site
+(`katekwon.my.canva.site`, design `DAHYFWWaYeo`) and since redesigned.
+Plain HTML, CSS and JavaScript: no framework and no build step, so the repo root
+is the website.
+
+## Files
 
 ```
-index.html        home (hero + about me)
-projects.html     all 7 projects on one page, with a light-gray project list on the right
-css/style.css     layout + design tokens
-js/main.js        dropdown, mobile menu, scroll-in animation, project list highlight
-vercel.json       clean URLs, plus redirects from the old /<project> pages
-assets/           name-web.svg (home background), img/, fonts/
-tools/            build_titles.py — regenerates the stitched project titles
-docs/             design inventory from Canva
+index.html           home: name hero, photo grid, about me
+projects.html        all seven case studies on one page
+css/style.css        all styles, in numbered sections (contents at the top)
+js/main.js           navigation, scroll fade-in, project list, carousels
+vercel.json          clean URLs and redirects from the old /<project> pages
+assets/              backgrounds, signature, flower, icons, fonts
+assets/img/          project and home-page images
+tools/               scripts that generate parts of the pages (below)
+docs/                snapshot of the original Canva design
 ```
 
 ## How the layout works
 
-The nav (home + a "projects" dropdown) is repeated at the top of both pages.
-When adding a project, add its section to projects.html, its link to the
-dropdown on both pages, and to the right-hand list in projects.html.
+Each page section is an artboard 1366 units wide, the size of the Canva canvas.
+Every placed element has class `el` and its position inline in Canva pixels:
 
-Each Canva page is a 1366px artboard. Every element carries its Canva geometry
-inline (`--x --y --w --h`, in Canva px) and CSS scales it to the viewport width,
-the same way Canva sites scale. Images also carry Canva's crop (`--ix --iy --iw --ih`).
-To move something, change its numbers. Below 760px the artboard switches to a
-single-column flow in source order.
-
-## Stitched project titles
-
-Project titles on projects.html are cross-stitch cursive squares, built from a
-hand-made cross-stitch alphabet (tools/cursive_glyphs.json). They are generated:
-
-```
-python3 tools/build_titles.py
+```html
+<div class="el card" style="--x:136.6;--y:854.5;--w:344.6;--h:215">…</div>
 ```
 
-Edit a title by changing its `data-text` on the `<h2 class="title stitch">`
-(one line starts at the left edge of the text boxes; `a|b` puts `b` at the
-bottom-right, ending at the right edge of the text boxes), then rerun the
-script; it also re-spaces the boxes below. Lowercase a–z and spaces only.
+CSS scales those units to the window (`--u` = one Canva pixel), so the whole
+page scales like the Canva site did. Images also carry Canva's crop
+(`--ix --iy --iw --ih`). To move or resize something, change its numbers.
 
-## Re-spacing a project after editing its content
+At 760px wide and below (phones) the artboard is switched off and elements flow
+in the order they appear in the HTML. That section of `style.css` lists the
+phone-only adjustments.
 
-```
-python3 -m http.server 8080 &
-NODE_PATH=$(npm root -g) node tools/reflow.cjs http://localhost:8080/projects.html
-```
+The navigation is written out in both HTML files. When adding a project, add it
+to the dropdown in both files and to the side list in `projects.html`.
 
-(needs the `playwright` package). It measures each row's text at five screen
-widths, sizes boxes in a row to the tallest content, and re-stacks the rows
-below the background/role boxes with even gaps. A new element can be added with
-`--y:0`; it slots in after the element before it. Run build_titles.py first if
-titles changed.
+## Content patterns (projects page)
 
-Case-study patterns (after somi.framer.website): `.card.trio` (three cards in a
-row, centred label), `svg.arrow` (thin down arrow, used once: problem → insight),
-`.kicker` + `.pull` (small label over a very large statement), `.pull-note`
-(centred lead-in line), `.lede` + `.subline` (left heading and its subline),
-`.stat-line` (key line in a card), `.card.beside` (text card next to tall images,
-text at the bottom), `.carousel` (slide strip, one shown large; arrows, click,
-keys, auto-advance until used), `.arrow.labeled` (arrow with a label in its stem),
-video frames take the height of the card beside them. Project text sizes follow Somi's pages; borders are hairlines
-(`--line`, 1 Canva px) in #252e34.
+| Class | What it is |
+|---|---|
+| `.box` | the "background:" and "role:" boxes |
+| `.card` | outlined text card; `.card.trio` three in a row, `.card.beside` text at the bottom next to tall images |
+| `.arrow`, `.arrow.labeled` | thin down arrow; with a label in its stem ("the execution") |
+| `.kicker` + `.pull` | small label over a very large statement |
+| `.pull-note` | centred lead-in line |
+| `.lede` + `.subline` | left-aligned heading with its subline |
+| `.stat-line` | the key line in a card, a step larger |
+| `.carousel` | slide strip with one slide shown large (arrows, click, keys, auto-advance) |
+| `.glow` | soft-light highlight placed right before the element it highlights |
+| `.img.cover` | square-cornered cover image; other images get rounded, outlined frames |
 
-## Background
+Type sizes on the projects page follow Somi Park's case studies
+(somi.framer.website): 16 / 20 / 30 / 50px at a 1366px window.
 
-assets/velvet.webp is the velvet photo, enhanced (de-blocked, enlarged 3x,
-sharpened, fine grain added), lightened to a pale aqua so the original blue
-stays readable, and stacked with its own mirror image so it repeats down the
-page without a seam.
+## Tools
 
-## Glow highlights
+Run from the repo root. Serve the site locally first for `reflow.cjs`:
+`python3 -m http.server 8080`.
 
-assets/glow.webp (the soft-light photo, de-blocked and enlarged 2x) is faded in
-radially behind key moments via `<div class="el glow">` placed right before the
-element it highlights (`--fx`/`--fy` pick which part of the photo, `--zoom` how
-close); tools/reflow.cjs moves each glow with that element. Glows
-are hidden on phones.
+| Command | What it does |
+|---|---|
+| `python3 tools/build_titles.py` | Rebuilds the cross-stitch project titles from each `<h2 class="title stitch" data-text="…">` (`a|b` = two lines) and moves the boxes below to fit. Uses `stitch_title.py` and the traced alphabet in `cursive_glyphs.json`. |
+| `NODE_PATH=$(npm root -g) node tools/reflow.cjs http://localhost:8080/projects.html` | Re-spaces each project after copy edits: sizes boxes to their text (measured at five window widths) and re-stacks rows with even gaps. New elements can be added with `--y:0`. Needs the `playwright` package. |
+| `python3 tools/build_stamp.py` | Rebuilds the cross-stitch flower (`flower.svg`), the stamp (`stamp.svg`) and the site icons from `flower_cells.json`. Needs Pillow. |
 
-## Stamp and site icon
+Typical copy edit: change the text in `projects.html`, run `reflow.cjs`, check
+the page.
 
-assets/flower.svg is the traced cross-stitch flower (tools/flower_cells.json),
-shown in the home page's bottom-left corner. assets/stamp.svg frames it in a
-perforated stamp border, on the same square grid as the titles. It sits in the
-home page's bottom-left corner and is the site icon (with favicon-64.png and
-apple-touch-icon.png). Rebuild all three with `python3 tools/build_stamp.py`.
+## Assets
+
+- **Background** (`velvet.webp`): the velvet photo, enhanced and lightened, stacked
+  with its mirror image so it repeats down the page without a seam.
+- **Glows** (`glow.webp`): the soft-light photo. Each `.glow` picks a part of it
+  (`--fx`/`--fy`) and a zoom (`--zoom`).
+- **Signature** (`name-web.svg`): the home page hero.
+- **Flower and icons** (`flower.svg`, `stamp.svg`, `favicon-64.png`,
+  `apple-touch-icon.png`): built by `build_stamp.py`.
+- **Fonts**: DM Sans comes from Google Fonts. Headings use Century Schoolbook Bold
+  where installed, otherwise `fonts/C059-Bold.woff2`, a free metric-compatible
+  clone (AGPL with font exception). Keep its license files next to it.
 
 ## Run locally
 
@@ -91,19 +90,9 @@ apple-touch-icon.png). Rebuild all three with `python3 tools/build_stamp.py`.
 python3 -m http.server 8080
 ```
 
-## Deploy (Vercel)
+Then open http://localhost:8080.
 
-1. Push this folder to a GitHub repo.
-2. vercel.com → Add New → Project → import the repo.
-3. Framework preset: **Other**. No build command, output directory = root.
+## Deploy
 
-## Adding or replacing images
-
-Drop each file into `assets/img/` with that name. If it is a Canva SVG export
-(already cropped and rounded), use `.svg`, add class `svg` to the frame and remove the crop vars.
-
-## Open items
-
-- **Fonts**: DM Sans (body, Google Fonts). Headings use Century Schoolbook Bold when installed, otherwise C059 Bold (free metric-compatible clone, AGPL with font exception) from `assets/fonts/` — keep its license files alongside it.
-- Nav styling is approximated from Canva's page previews.
-- Cockpit photo: on hold, not placed.
+The site is deployed on Vercel from this repo: every push to `main` goes live.
+Settings: Framework Preset "Other", no build command, output directory = repo root.
